@@ -17,10 +17,7 @@ export interface RobinhoodNetworkConfig {
 }
 
 const environment: RobinhoodEnvironment =
-  process.env.ROBINHOOD_CHAIN_ENV === "mainnet" ||
-  (process.env.ROBINHOOD_CHAIN_ENV !== "testnet" && process.env.NODE_ENV === "production")
-    ? "mainnet"
-    : "testnet";
+  process.env.ROBINHOOD_CHAIN_ENV === "testnet" ? "testnet" : "mainnet";
 
 const chainId = environment === "mainnet" ? 4663 : 46630;
 
