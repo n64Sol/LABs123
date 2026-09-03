@@ -53,3 +53,8 @@ externalPort = 9000
 
 [nix]
 channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+ROBINHOOD_CHAIN_ENV = "mainnet"
