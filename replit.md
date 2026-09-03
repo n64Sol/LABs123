@@ -41,7 +41,7 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-- Set `ROBINHOOD_CHAIN_ENV=mainnet` for launch; development defaults to Robinhood Chain Testnet. Configure audited token and treasury addresses with `ROBINHOOD_LAB_TOKEN_ADDRESS`, `ROBINHOOD_USDC_ADDRESS`, and `ROBINHOOD_TREASURY_ADDRESS` only when they are approved.
+- Robinhood Chain mainnet is the default in every environment. Set `ROBINHOOD_CHAIN_ENV=testnet` only for explicit testnet testing. Configure audited token and treasury addresses with `ROBINHOOD_LAB_TOKEN_ADDRESS`, `ROBINHOOD_USDC_ADDRESS`, and `ROBINHOOD_TREASURY_ADDRESS` only when they are approved.
 - Existing player rows and balances are not rewritten by wallet sign-in. A reversible migration is to export the legacy users/balances, link each verified EVM wallet through an explicit account-linking flow, and restore the export if a link is rejected; no automatic address guessing is performed.
 - `ALLOW_MOCK_WALLET_AUTH=true` is development-only and is ignored in production. It is the only mode in which fixture wallets can be exposed.
 
