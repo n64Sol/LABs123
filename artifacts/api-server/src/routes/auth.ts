@@ -44,6 +44,7 @@ function parseChainId(value: unknown): number | null {
 }
 
 router.get("/auth/config", async (_req: Request, res: Response): Promise<void> => {
+  res.setHeader("Cache-Control", "no-store");
   res.json(robinhoodConfigDto());
 });
 
