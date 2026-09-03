@@ -1,0 +1,122 @@
+Final implementation patch for Labyrinths:
+
+Add these requirements before building.
+
+## Database transactions
+
+Every server action that mutates balances, pending earnings, treasury, upgrades, runs, ratings, or ledger records must use a database transaction.
+
+Required transactional actions:
+
+* start paid run
+* start free run
+* complete run
+* buy upgrade
+* unlock Toll Gate
+* set entry fee
+* collect owner earnings
+* submit rating
+* seed/admin balance credits
+
+If any part of an economy mutation fails, roll back the entire action.
+
+Example: for paid entry, deduct visitor $LAB, credit owner pending entry share, credit treasury, create ledger records, create activity records, and create the run in one transaction. If run creation fails, no balances should change.
+
+## Idempotency keys
+
+Implement idempotency protection for important actions.
+
+Use an action/request id or server-generated idempotency key for:
+
+* start run
+* complete run
+* buy upgrade
+* unlock Toll Gate
+* collect earnings
+* submit rating
+
+Double-clicking a button must not double-charge, double-reward, double-upgrade, or double-submit.
+
+If a request is repeated, return the existing completed result instead of applying the mutation again.
+
+## Cancellation and failed run policy
+
+For MVP:
+
+* A paid run charges only when the server successfully validates balance and creates the run.
+* If paid run validation fails, charge nothing.
+* If run creation fails, charge nothing.
+* Once a paid run is successfully started, entry fee is not refunded in MVP.
+* Cancelled or failed runs do not generate visitor loot or owner drop-share.
+* Completed runs are the only runs that generate visitor rewards, owner drop-share, and ratings.
+
+## Daily reward/run capacity placeholder
+
+Add simple fields to Labyrinths for future economy balancing:
+
+* daily_run_capacity
+* daily_reward_capacity
+* runs_today
+* reward_value_today
+
+For MVP, these can be generous and mostly informational, but show them in owner/discovery UI where useful.
+
+This prepares the game for future reward caps and prevents the architecture from assuming unlimited rewards forever.
+
+## Derived stats
+
+Where possible, derive key stats from persisted records instead of trusting hardcoded card values.
+
+Derived or recalculated stats should include:
+
+* today’s runs
+* all-time runs
+* average rating
+* owner earnings today
+* treasury earnings
+* recent activity
+* trending score
+* best owner earnings
+* best free rewards
+
+Seeded Labyrinths should be normal database records, not static UI-only data.
+
+## Collect earnings
+
+Collect Earnings must be a transaction.
+
+When owner collects earnings:
+
+1. calculate pending owner earnings
+2. move pending soft currencies/token to wallet balances
+3. mark pending earnings as collected or write offsetting ledger records
+4. create `owner_earnings_collected` ledger entries
+5. create activity log record
+6. return updated balances and earnings summary
+
+Do not allow the same pending earnings to be collected twice.
+
+## Final verification checklist
+
+Before marking the build complete, verify these exact cases:
+
+1. State persists after reload.
+2. Switching mock wallets works.
+3. Hammad can claim a Labyrinth.
+4. Hammad can upgrade and publish his Labyrinth.
+5. Guest Adventurer can enter Hammad’s free Labyrinth.
+6. Guest Adventurer’s completed free run generates visitor loot and Hammad’s 20% pending drop-share.
+7. Hammad running his own Labyrinth generates normal loot but no owner drop-share.
+8. Hammad does not pay his own Toll Gate fee.
+9. Guest Adventurer entering a paid Labyrinth pays full $LAB entry fee.
+10. Paid entry credits 80% to owner pending earnings and 20% to treasury.
+11. Paid run completion also generates owner 20% drop-share.
+12. Completing the same run twice does not grant rewards twice.
+13. Buying the same upgrade twice respects level caps and funds.
+14. Unlocking Toll Gate twice does not charge twice.
+15. Ratings require completed non-owner runs.
+16. Activity log persists.
+17. Economy ledger persists and matches balance changes.
+18. Owner can collect pending earnings once, and balances update correctly.
+19. Suggested entry fee is advisory only; high fees warn but are not blocked.
+20. Chamber data model exists and is ready for future VTT-style room imports.

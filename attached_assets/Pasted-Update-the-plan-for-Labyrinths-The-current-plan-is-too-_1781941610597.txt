@@ -1,0 +1,444 @@
+Update the plan for **Labyrinths**.
+
+The current plan is too client-only. This is intended to become a real Solana game, so the prototype must include persistence and server-authoritative game state now, even if wallet/token payments are mocked at first.
+
+## Revised technical/product direction
+
+Build **Labyrinths** as a browser game prototype with:
+
+* persistent database-backed state
+* server-side economy logic
+* mock wallet identity for now
+* Solana-ready architecture
+* mock $LAB balances initially
+* future real Solana wallet and token integration clearly planned
+* no real mainnet payments yet
+* no real blockchain program yet
+
+Do **not** make this a purely client-side mock app. The game must persist data across reloads.
+
+## Persistence requirement
+
+Add a database and use it to store:
+
+* users
+* wallet identities
+* player balances
+* Labyrinth ownership
+* Labyrinth metadata
+* published/unpublished state
+* upgrades
+* Toll Gate status
+* entry fees
+* runs
+* rewards
+* owner earnings
+* treasury earnings
+* ratings
+* activity log
+* Chamber templates
+* room/chamber metadata
+* future VTT import records
+
+Seed the database with mock data, but all actions should update persistent database records.
+
+## Server-authoritative economy
+
+Do not let the client directly mutate balances, treasury, owner earnings, upgrades, or run rewards.
+
+All important economy actions must go through server/API actions:
+
+* claim Labyrinth
+* rename Labyrinth
+* publish/unpublish Labyrinth
+* buy upgrade
+* unlock Toll Gate
+* set entry fee
+* start run
+* complete run
+* calculate visitor rewards
+* calculate owner 20% drop-share
+* calculate paid entry 80/20 split
+* update treasury
+* submit rating
+* collect owner earnings
+
+The client should request actions. The server should validate them and update the database.
+
+## Core economy rules
+
+Every Labyrinth is free by default.
+
+Owners earn **20% of visitor drop value** from every non-owner visitor run, whether the Labyrinth is free or paid.
+
+Visitor rewards are not reduced by this 20%. The owner drop-share is generated as an additional owner reward.
+
+Owner drop-share does **not** apply when an owner runs their own Labyrinth.
+
+Owners can unlock **Toll Gate** by paying mock $LAB.
+
+Once Toll Gate is unlocked, the owner can set any entry fee they want.
+
+Paid entry applies only to non-owner visitors.
+
+When a non-owner visitor enters a paid Labyrinth:
+
+* deduct the full entry fee from visitor balance
+* credit 80% of the entry fee to the Labyrinth owner
+* credit 20% of the entry fee to the treasury
+* create a transaction/activity ledger record
+* then start the run
+
+Owners can preview or run their own Labyrinth without paying their own Toll Gate fee.
+
+## Solana-ready architecture
+
+Use mock wallet connection initially, but structure the app as if wallet identity will become real.
+
+Create a wallet identity model:
+
+* wallet address
+* display name
+* avatar
+* owned Labyrinth ID
+* balances
+* session/auth state
+
+Add comments and placeholders for future Solana integration:
+
+* real wallet connect
+* wallet signature login
+* devnet $LAB token
+* real paid-entry transaction verification
+* treasury wallet
+* owner wallet payout
+* transaction signature storage
+* on-chain payment confirmation
+
+Future real Solana flow should be:
+
+1. visitor connects wallet
+2. visitor previews paid Labyrinth
+3. app creates a transaction for entry fee
+4. transaction pays owner share and treasury share
+5. user signs transaction
+6. app verifies transaction signature
+7. server records payment
+8. server starts the run
+
+Do not implement real Solana yet unless trivial, but keep the architecture ready.
+
+## Database schema
+
+Create a clean schema with tables similar to:
+
+### users
+
+* id
+* wallet_address
+* display_name
+* avatar_url
+* created_at
+
+### player_balances
+
+* user_id
+* gold
+* ore
+* dust
+* keys
+* lab_token
+
+### labyrinths
+
+* id
+* owner_user_id
+* name
+* description
+* level
+* depth
+* chamber_count
+* published
+* toll_gate_unlocked
+* entry_fee
+* rating
+* today_runs
+* all_time_runs
+* rare_node_count
+* boss_active
+* created_at
+* updated_at
+
+### labyrinth_biomes
+
+* id
+* labyrinth_id
+* biome_name
+
+### upgrades
+
+* id
+* key
+* category
+* name
+* description
+* base_cost
+* currency
+* effect_json
+
+### labyrinth_upgrades
+
+* id
+* labyrinth_id
+* upgrade_key
+* level
+* purchased_at
+
+### chamber_templates
+
+* id
+* name
+* biome
+* width
+* height
+* background
+* walls_json
+* doors_json
+* lights_json
+* spawns_json
+* difficulty
+* loot_tier
+* tags_json
+
+### labyrinth_chambers
+
+* id
+* labyrinth_id
+* chamber_template_id
+* order_index
+* active
+
+### runs
+
+* id
+* visitor_user_id
+* labyrinth_id
+* owner_user_id
+* status
+* is_paid
+* entry_fee
+* owner_entry_share
+* treasury_entry_share
+* visitor_rewards_json
+* owner_drop_share_json
+* started_at
+* completed_at
+
+### ratings
+
+* id
+* run_id
+* visitor_user_id
+* labyrinth_id
+* rating
+* comment
+* created_at
+
+### treasury
+
+* id
+* lab_token_balance
+* updated_at
+
+### activity_log
+
+* id
+* type
+* actor_user_id
+* labyrinth_id
+* message
+* data_json
+* created_at
+
+### solana_transactions
+
+* id
+* type
+* wallet_address
+* labyrinth_id
+* signature
+* status
+* amount
+* owner_share
+* treasury_share
+* raw_json
+* created_at
+
+The exact schema can differ, but these entities must be represented.
+
+## API/server actions
+
+Create API/server actions for:
+
+### Auth/player
+
+* connect mock wallet
+* get current player
+* get player balances
+
+### Labyrinth
+
+* claim Labyrinth
+* get owner Labyrinth
+* get published Labyrinths
+* update Labyrinth name/description
+* publish Labyrinth
+* unpublish Labyrinth
+* preview Labyrinth
+
+### Upgrades
+
+* list upgrade catalog
+* buy upgrade
+* apply upgrade effects
+
+### Toll Gate
+
+* unlock Toll Gate
+* set entry fee
+* toggle free/paid mode if needed
+* calculate suggested fee range
+
+### Runs
+
+* start free run
+* start paid run
+* complete run
+* calculate visitor rewards
+* calculate owner drop-share
+* rate run
+
+### Economy
+
+* get treasury
+* get owner earnings
+* get activity log
+* collect owner earnings if using pending earnings
+
+## UI requirements remain
+
+Keep all previously planned UI:
+
+* landing page
+* wallet/profile header
+* overworld discovery
+* Labyrinth cards
+* filters/search
+* preview modal
+* owner dashboard
+* owner earnings panel
+* upgrade/shop
+* Toll Gate card
+* entry fee editor
+* playable Chamber screen
+* run summary
+* rating prompt
+* activity/transaction log
+
+But now these screens should read/write from persistent state through server/API actions, not only in-memory client state.
+
+## Activity/transaction log
+
+Add a visible activity log showing:
+
+* wallet connected
+* Labyrinth claimed
+* Labyrinth published
+* upgrade purchased
+* Toll Gate unlocked
+* entry fee changed
+* visitor entered free Labyrinth
+* visitor paid entry fee
+* owner received 80% entry share
+* treasury received 20% entry share
+* visitor earned loot
+* owner earned 20% drop-share
+* run completed
+* rating submitted
+
+This log should persist in the database.
+
+## Chamber/run scope
+
+Keep the first Chamber run simple and reliable.
+
+Use placeholder room visuals and placeholder character/monster art.
+
+Do not over-engineer combat or physics.
+
+The Chamber system should prove:
+
+* room/chamber data model
+* movement or simple interaction
+* rare node interaction
+* chest interaction
+* monster interaction
+* exit/completion flow
+* visitor reward calculation
+* owner 20% drop-share calculation
+* paid entry transaction summary if applicable
+
+## VTT-style room import readiness
+
+Keep the internal Chamber format ready for future Czepeku/Foundry-style room imports.
+
+Add a documented placeholder utility explaining the future flow:
+
+1. upload module or extracted module files
+2. extract room image/video
+3. extract scene dimensions
+4. extract wall coordinates
+5. extract doors
+6. extract lights
+7. convert to internal Chamber template
+8. store Chamber template in database
+9. use template in Labyrinth runs
+
+The final game should not require Foundry, Alchemy, or EncounterPlus to run. Those are source formats only.
+
+## Updated out of scope
+
+Remove “no backend/database persistence” from out of scope.
+
+The following are still out of scope:
+
+* real mainnet blockchain payments
+* real SPL token launch
+* custom Solana program
+* real NFT/asset ownership
+* full VTT importer
+* final character/monster art
+* complex combat
+* procedural tilemap generation
+
+## MVP completion criteria
+
+Done means:
+
+1. Data persists across reloads.
+2. Mock wallet identity exists.
+3. Player can claim a Labyrinth.
+4. Player can upgrade Labyrinth.
+5. Player can publish it.
+6. Overworld shows persisted published Labyrinths.
+7. Visitor can enter free Labyrinth.
+8. Visitor can enter paid Labyrinth if balance is sufficient.
+9. Paid entry updates visitor balance, owner earnings, and treasury with 80/20 split.
+10. Every non-owner visitor run generates 20% owner drop-share.
+11. Owner self-runs do not generate owner drop-share.
+12. Owner self-runs do not charge entry fee.
+13. Run summary shows visitor rewards, owner drop-share, and entry split if paid.
+14. Owner dashboard shows persistent stats and earnings.
+15. Activity log persists.
+16. Chamber data model exists and is ready for future VTT-style imports.
+17. UI remains polished high-fantasy, not generic dark dungeon.

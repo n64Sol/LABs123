@@ -1,0 +1,3465 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Labyrinths — server-authoritative high-fantasy dungeon economy game API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Robinhood Chain wallet authentication and player session
+  - name: labyrinths
+    description: Claim, configure, publish, and browse labyrinths
+  - name: upgrades
+    description: Chamber and labyrinth upgrades
+  - name: rooms
+    description: Room-type pool unlocks that shape the dungeon
+  - name: tollgate
+    description: Toll Gate paid-entry configuration
+  - name: runs
+    description: Running labyrinths, combat completion, and ratings
+  - name: economy
+    description: Treasury, owner earnings, ledger, and activity
+  - name: discovery
+    description: Featured, trending, leaderboard, and world stats
+  - name: items
+    description: Item templates, inventory, loadout, and crafting
+  - name: robinhood
+    description: Robinhood Chain network and custodial settlement status
+  - name: marketplace
+    description: USDC marketplace — list, browse, buy, and cancel item listings
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/mock-wallets:
+    get:
+      operationId: listMockWallets
+      tags: [auth]
+      summary: List development-only wallet fixtures
+      responses:
+        "200":
+          description: Mock wallets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MockWallet"
+
+  /auth/config:
+    get:
+      operationId: getAuthConfig
+      tags: [auth]
+      summary: Get the configured Robinhood Chain network and settlement settings
+      responses:
+        "200":
+          description: Robinhood Chain configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthConfig"
+
+  /auth/challenge:
+    post:
+      operationId: requestAuthChallenge
+      tags: [auth]
+      summary: Request a sign-in nonce for an EVM wallet on Robinhood Chain
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthChallengeInput"
+      responses:
+        "200":
+          description: Challenge issued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthChallenge"
+
+  /auth/verify:
+    post:
+      operationId: verifyAuthChallenge
+      tags: [auth]
+      summary: Verify an EVM-signed challenge and establish a session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthVerifyInput"
+      responses:
+        "200":
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Player"
+        "401":
+          description: Invalid signature
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /auth/me:
+    get:
+      operationId: getCurrentPlayer
+      tags: [auth]
+      summary: Get the currently authenticated player
+      responses:
+        "200":
+          description: Current player
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Player"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Clear the current session
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ok"
+
+  /balances:
+    get:
+      operationId: getBalances
+      tags: [auth]
+      summary: Get the current player's currency and material balances
+      responses:
+        "200":
+          description: Balances
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Balances"
+
+  /labyrinths:
+    get:
+      operationId: listLabyrinths
+      tags: [labyrinths]
+      summary: Browse the published overworld of labyrinths
+      parameters:
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [trending, top_rated, newest, most_run, highest_reward]
+        - name: entry
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [all, free, paid]
+        - name: biome
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Published labyrinths
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Labyrinth"
+
+  /labyrinths/claim:
+    post:
+      operationId: claimLabyrinth
+      tags: [labyrinths]
+      summary: Claim a fresh labyrinth for the current player
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LabyrinthClaimInput"
+      responses:
+        "201":
+          description: Claimed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Labyrinth"
+        "409":
+          description: Player already owns a labyrinth
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /labyrinths/mine:
+    get:
+      operationId: getMyLabyrinth
+      tags: [labyrinths]
+      summary: Get the current player's owned labyrinth
+      responses:
+        "200":
+          description: Owned labyrinth (null if none claimed)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LabyrinthOrNull"
+
+  /labyrinths/{id}:
+    get:
+      operationId: getLabyrinth
+      tags: [labyrinths]
+      summary: Get a labyrinth by id
+      parameters:
+        - $ref: "#/components/parameters/LabyrinthId"
+      responses:
+        "200":
+          description: Labyrinth
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Labyrinth"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    patch:
+      operationId: updateLabyrinth
+      tags: [labyrinths]
+      summary: Update labyrinth name, description, or theme
+      parameters:
+        - $ref: "#/components/parameters/LabyrinthId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LabyrinthUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Labyrinth"
+
+  /labyrinths/{id}/preview:
+    get:
+      operationId: getLabyrinthPreview
+      tags: [labyrinths]
+      summary: Get a rich preview (chambers, loot table, difficulty) before running
+      parameters:
+        - $ref: "#/components/parameters/LabyrinthId"
+      responses:
+        "200":
+          description: Preview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LabyrinthPreview"
+
+  /labyrinths/{id}/publish:
+    post:
+      operationId: publishLabyrinth
+      tags: [labyrinths]
+      summary: Publish a labyrinth to the overworld
+      parameters:
+        - $ref: "#/components/parameters/LabyrinthId"
+      responses:
+        "200":
+          description: Published
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Labyrinth"
+
+  /labyrinths/{id}/unpublish:
+    post:
+      operationId: unpublishLabyrinth
+      tags: [labyrinths]
+      summary: Remove a labyrinth from the overworld
+      parameters:
+        - $ref: "#/components/parameters/LabyrinthId"
+      responses:
+        "200":
+          description: Unpublished
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Labyrinth"
+
+  /labyrinths/{id}/ratings:
+    get:
+      operationId: listLabyrinthRatings
+      tags: [labyrinths]
+      summary: List ratings for a labyrinth
+      parameters:
+        - $ref: "#/components/parameters/LabyrinthId"
+      responses:
+        "200":
+          description: Ratings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Rating"
+
+  /upgrades:
+    get:
+      operationId: listUpgradeCatalog
+      tags: [upgrades]
+      summary: List the full upgrade catalog
+      responses:
+        "200":
+          description: Upgrade catalog
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UpgradeCatalogItem"
+
+  /labyrinths/{id}/upgrades:
+    get:
+      operationId: listLabyrinthUpgrades
+      tags: [upgrades]
+      summary: List upgrades purchased for a labyrinth
+      parameters:
+        - $ref: "#/components/parameters/LabyrinthId"
+      responses:
+        "200":
+          description: Purchased upgrades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LabyrinthUpgrade"
+    post:
+      operationId: buyLabyrinthUpgrade
+      tags: [upgrades]
+      summary: Purchase or level up an upgrade for a labyrinth
+      parameters:
+        - $ref: "#/components/parameters/LabyrinthId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpgradePurchaseInput"
+      responses:
+        "200":
+          description: Upgrade purchased
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpgradePurchaseResult"
+        "402":
+          description: Insufficient funds
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /labyrinths/{id}/room-types:
+    get:
+      operationId: listRoomTypes
+      tags: [rooms]
+      summary: List the room-type catalog with this labyrinth's unlock state
+      parameters:
+        - $ref: "#/components/parameters/LabyrinthId"
+      responses:
+        "200":
+          description: Room-type catalog
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RoomType"
+
+  /labyrinths/{id}/room-types/unlock:
+    post:
+      operationId: unlockRoomType
+      tags: [rooms]
+      summary: Unlock a room type with gold to expand the dungeon's pool
+      parameters:
+        - $ref: "#/components/parameters/LabyrinthId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoomUnlockInput"
+      responses:
+        "200":
+          description: Room type unlocked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomUnlockResult"
+        "402":
+          description: Insufficient funds
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /labyrinths/{id}/toll-gate/suggested-fee:
+    get:
+      operationId: getSuggestedFee
+      tags: [tollgate]
+      summary: Get appeal score and suggested entry fee range
+      parameters:
+        - $ref: "#/components/parameters/LabyrinthId"
+      responses:
+        "200":
+          description: Suggested fee
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuggestedFee"
+
+  /labyrinths/{id}/toll-gate/unlock:
+    post:
+      operationId: unlockTollGate
+      tags: [tollgate]
+      summary: Unlock the Toll Gate to enable paid entry
+      parameters:
+        - $ref: "#/components/parameters/LabyrinthId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IdempotentInput"
+      responses:
+        "200":
+          description: Toll Gate unlocked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpgradePurchaseResult"
+        "402":
+          description: Insufficient funds
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /labyrinths/{id}/toll-gate/fee:
+    patch:
+      operationId: setTollGateFee
+      tags: [tollgate]
+      summary: Set the paid entry fee for a labyrinth
+      parameters:
+        - $ref: "#/components/parameters/LabyrinthId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TollGateFeeInput"
+      responses:
+        "200":
+          description: Fee updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Labyrinth"
+
+  /runs:
+    post:
+      operationId: startRun
+      tags: [runs]
+      summary: Start a run of a labyrinth (handles free, paid, and owner self-run)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RunStartInput"
+      responses:
+        "201":
+          description: Run started, includes playable chamber layout
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Run"
+        "402":
+          description: Insufficient funds for paid entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /runs/mine:
+    get:
+      operationId: listMyRuns
+      tags: [runs]
+      summary: List the current player's run history
+      responses:
+        "200":
+          description: Runs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Run"
+
+  /runs/{id}:
+    get:
+      operationId: getRun
+      tags: [runs]
+      summary: Get a run by id
+      parameters:
+        - $ref: "#/components/parameters/RunId"
+      responses:
+        "200":
+          description: Run
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Run"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /runs/{id}/complete:
+    post:
+      operationId: completeRun
+      tags: [runs]
+      summary: Complete a run; server rolls loot and settles the economy
+      parameters:
+        - $ref: "#/components/parameters/RunId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RunCompleteInput"
+      responses:
+        "200":
+          description: Run settled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RunSummary"
+
+  /runs/{id}/rate:
+    post:
+      operationId: rateRun
+      tags: [runs]
+      summary: Rate a completed run's labyrinth
+      parameters:
+        - $ref: "#/components/parameters/RunId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RatingInput"
+      responses:
+        "201":
+          description: Rating saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Rating"
+
+  /economy/treasury:
+    get:
+      operationId: getTreasury
+      tags: [economy]
+      summary: Get global treasury status
+      responses:
+        "200":
+          description: Treasury
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Treasury"
+
+  /economy/owner-earnings:
+    get:
+      operationId: getOwnerEarnings
+      tags: [economy]
+      summary: Get the current owner's pending and lifetime earnings
+      responses:
+        "200":
+          description: Owner earnings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OwnerEarnings"
+
+  /economy/collect:
+    post:
+      operationId: collectEarnings
+      tags: [economy]
+      summary: Collect pending owner earnings into the wallet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IdempotentInput"
+      responses:
+        "200":
+          description: Collected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CollectResult"
+
+  /economy/ledger:
+    get:
+      operationId: getLedger
+      tags: [economy]
+      summary: Get the current player's economy ledger entries
+      responses:
+        "200":
+          description: Ledger
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LedgerEntry"
+
+  /activity:
+    get:
+      operationId: getActivityFeed
+      tags: [economy]
+      summary: Global recent activity feed
+      responses:
+        "200":
+          description: Activity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityEntry"
+
+  /activity/mine:
+    get:
+      operationId: getMyActivity
+      tags: [economy]
+      summary: Current player's activity feed
+      responses:
+        "200":
+          description: Activity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityEntry"
+
+  /discovery/featured:
+    get:
+      operationId: getFeaturedLabyrinths
+      tags: [discovery]
+      summary: Hand-picked featured labyrinths
+      responses:
+        "200":
+          description: Featured
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Labyrinth"
+
+  /discovery/trending:
+    get:
+      operationId: getTrendingLabyrinths
+      tags: [discovery]
+      summary: Trending labyrinths by recent run volume
+      responses:
+        "200":
+          description: Trending
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Labyrinth"
+
+  /discovery/top-paid:
+    get:
+      operationId: getTopPaidLabyrinths
+      tags: [discovery]
+      summary: Top earning paid labyrinths
+      responses:
+        "200":
+          description: Top paid
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Labyrinth"
+
+  /discovery/top-free:
+    get:
+      operationId: getTopFreeLabyrinths
+      tags: [discovery]
+      summary: Top rated free labyrinths
+      responses:
+        "200":
+          description: Top free
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Labyrinth"
+
+  /discovery/leaderboard:
+    get:
+      operationId: getLeaderboard
+      tags: [discovery]
+      summary: Top owners ranked by lifetime earnings
+      responses:
+        "200":
+          description: Leaderboard
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardEntry"
+
+  /discovery/world-stats:
+    get:
+      operationId: getWorldStats
+      tags: [discovery]
+      summary: Global world statistics
+      responses:
+        "200":
+          description: World stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorldStats"
+
+  /items/templates:
+    get:
+      operationId: listItemTemplates
+      tags: [items]
+      summary: List all item templates
+      responses:
+        "200":
+          description: Item templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ItemTemplate"
+
+  /items/mine:
+    get:
+      operationId: listMyItems
+      tags: [items]
+      summary: List the current player's inventory
+      responses:
+        "200":
+          description: Inventory
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PlayerItem"
+
+  /items/{id}/upgrade:
+    post:
+      operationId: upgradePlayerItem
+      tags: [items]
+      summary: Spend materials to level up an owned item
+      parameters:
+        - $ref: "#/components/parameters/PlayerItemId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IdempotentInput"
+      responses:
+        "200":
+          description: Item upgraded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ItemMutationResult"
+        "402":
+          description: Insufficient materials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /items/bulk-dispose:
+    post:
+      operationId: bulkDisposeItems
+      tags: [items]
+      summary: Bulk sell (for gold) or scrap (for materials) unequipped items
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkDisposeInput"
+      responses:
+        "200":
+          description: Items disposed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BulkDisposeResult"
+        "400":
+          description: No eligible items or invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /loadout:
+    get:
+      operationId: getLoadout
+      tags: [items]
+      summary: Get the current player's 7-slot loadout and derived combat stats
+      responses:
+        "200":
+          description: Loadout
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Loadout"
+
+  /loadout/equip:
+    post:
+      operationId: equipItem
+      tags: [items]
+      summary: Equip an item into its slot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EquipInput"
+      responses:
+        "200":
+          description: Loadout updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Loadout"
+
+  /loadout/unequip:
+    post:
+      operationId: unequipSlot
+      tags: [items]
+      summary: Unequip an item from a slot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UnequipInput"
+      responses:
+        "200":
+          description: Loadout updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Loadout"
+
+  /crafting/recipes:
+    get:
+      operationId: listCraftingRecipes
+      tags: [items]
+      summary: List all crafting recipes
+      responses:
+        "200":
+          description: Recipes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CraftingRecipe"
+
+  /crafting/craft:
+    post:
+      operationId: craftItem
+      tags: [items]
+      summary: Craft an item from a recipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CraftInput"
+      responses:
+        "200":
+          description: Crafted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ItemMutationResult"
+        "402":
+          description: Insufficient materials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /chain/transactions:
+    get:
+      operationId: listChainTransactions
+      tags: [robinhood]
+      summary: List Robinhood Chain settlement records
+      responses:
+        "200":
+          description: Transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChainTransaction"
+
+  /chain/status:
+    get:
+      operationId: getChainStatus
+      tags: [robinhood]
+      summary: Get Robinhood Chain connection and settlement status
+      responses:
+        "200":
+          description: Status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChainStatus"
+
+  /trade/active:
+    get:
+      operationId: getActiveTrade
+      tags: [trade]
+      summary: The caller's current (or most recent terminal) trade session, if any
+      responses:
+        "200":
+          description: Active trade or null
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TradeActiveEnvelope"
+
+  /trade/invite:
+    post:
+      operationId: inviteTrade
+      tags: [trade]
+      summary: Invite an encountered player to trade
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TradeInviteInput"
+      responses:
+        "200":
+          description: Pending trade created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TradeEnvelope"
+        "409":
+          description: A participant is already trading
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /trade/{id}/respond:
+    post:
+      operationId: respondTrade
+      tags: [trade]
+      summary: Accept or decline a pending trade invite
+      parameters:
+        - $ref: "#/components/parameters/TradeId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TradeRespondInput"
+      responses:
+        "200":
+          description: Updated trade
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TradeEnvelope"
+        "400":
+          description: Invalid response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /trade/{id}/offer:
+    post:
+      operationId: updateTradeOffer
+      tags: [trade]
+      summary: Stage this participant's full offer (replaces prior); resets confirmations
+      parameters:
+        - $ref: "#/components/parameters/TradeId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TradeOfferInput"
+      responses:
+        "200":
+          description: Updated trade
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TradeEnvelope"
+        "400":
+          description: Invalid offer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /trade/{id}/confirm:
+    post:
+      operationId: confirmTrade
+      tags: [trade]
+      summary: Toggle the caller's confirmation; settles atomically when both confirm
+      parameters:
+        - $ref: "#/components/parameters/TradeId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TradeConfirmInput"
+      responses:
+        "200":
+          description: Updated trade (possibly settled)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TradeEnvelope"
+        "400":
+          description: Invalid confirmation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /trade/{id}/cancel:
+    post:
+      operationId: cancelTrade
+      tags: [trade]
+      summary: Cancel a trade, returning everything
+      parameters:
+        - $ref: "#/components/parameters/TradeId"
+      responses:
+        "200":
+          description: Cancelled trade
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TradeEnvelope"
+        "400":
+          description: Could not cancel
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /marketplace:
+    get:
+      operationId: listMarketplaceListings
+      tags: [marketplace]
+      summary: Browse active marketplace listings
+      responses:
+        "200":
+          description: Active listings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MarketplaceListing"
+
+  /marketplace/mine:
+    get:
+      operationId: listMyMarketplaceListings
+      tags: [marketplace]
+      summary: The current player's active listings
+      responses:
+        "200":
+          description: Your active listings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MarketplaceListing"
+
+  /marketplace/deposit:
+    post:
+      operationId: depositUsdc
+      tags: [marketplace]
+      summary: Mock USDC on-ramp — credit test USDC to the player's balance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UsdcDepositInput"
+      responses:
+        "200":
+          description: USDC credited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsdcDepositResult"
+        "400":
+          description: Invalid amount
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /marketplace/list:
+    post:
+      operationId: createMarketplaceListing
+      tags: [marketplace]
+      summary: List an owned, unequipped item for sale in USDC (escrows the item)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateListingInput"
+      responses:
+        "200":
+          description: Listing created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateListingResult"
+        "400":
+          description: Invalid request (e.g. equipped item or bad price)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Item not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Item already listed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /marketplace/{id}/cancel:
+    post:
+      operationId: cancelMarketplaceListing
+      tags: [marketplace]
+      summary: Cancel an active listing and return the item from escrow
+      parameters:
+        - $ref: "#/components/parameters/ListingId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IdempotentInput"
+      responses:
+        "200":
+          description: Listing cancelled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CancelListingResult"
+        "404":
+          description: Listing not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Listing no longer active
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /marketplace/{id}/buy:
+    post:
+      operationId: buyMarketplaceListing
+      tags: [marketplace]
+      summary: Buy an active listing with USDC (settles and transfers the item)
+      parameters:
+        - $ref: "#/components/parameters/ListingId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IdempotentInput"
+      responses:
+        "200":
+          description: Purchase complete
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuyListingResult"
+        "400":
+          description: Cannot buy your own listing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "402":
+          description: Insufficient USDC
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Listing not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Listing no longer available
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /coop/party:
+    get:
+      operationId: getCoopParty
+      tags: [coop]
+      summary: Get the caller's current co-op party (or null)
+      responses:
+        "200":
+          description: Current party
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CoopPartyResponse"
+
+  /coop/parties:
+    post:
+      operationId: createCoopParty
+      tags: [coop]
+      summary: Create a co-op party for a labyrinth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCoopPartyInput"
+      responses:
+        "201":
+          description: Party created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CoopPartyResponse"
+
+  /coop/parties/{id}/invite:
+    post:
+      operationId: inviteToCoopParty
+      tags: [coop]
+      summary: Invite a player to the co-op party
+      parameters:
+        - $ref: "#/components/parameters/PartyId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InviteCoopInput"
+      responses:
+        "200":
+          description: Invited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CoopPartyResponse"
+
+  /coop/parties/{id}/accept:
+    post:
+      operationId: acceptCoopInvite
+      tags: [coop]
+      summary: Accept an invite to a co-op party
+      parameters:
+        - $ref: "#/components/parameters/PartyId"
+      responses:
+        "200":
+          description: Joined
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CoopPartyResponse"
+
+  /coop/parties/{id}/decline:
+    post:
+      operationId: declineCoopInvite
+      tags: [coop]
+      summary: Decline an invite to a co-op party
+      parameters:
+        - $ref: "#/components/parameters/PartyId"
+      responses:
+        "200":
+          description: Declined
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ok"
+
+  /coop/parties/{id}/ready:
+    post:
+      operationId: setCoopReady
+      tags: [coop]
+      summary: Toggle the caller's ready flag in the party
+      parameters:
+        - $ref: "#/components/parameters/PartyId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CoopReadyInput"
+      responses:
+        "200":
+          description: Updated party
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CoopPartyResponse"
+
+  /coop/parties/{id}/start:
+    post:
+      operationId: startCoopRun
+      tags: [coop]
+      summary: Host launches the shared co-op run
+      parameters:
+        - $ref: "#/components/parameters/PartyId"
+      responses:
+        "200":
+          description: Run started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CoopRunStarted"
+
+  /coop/leave:
+    post:
+      operationId: leaveCoopParty
+      tags: [coop]
+      summary: Leave the caller's current co-op party
+      responses:
+        "200":
+          description: Left
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ok"
+
+  /duels/active:
+    get:
+      operationId: getActiveDuel
+      tags: [duel]
+      summary: Get the caller's live or most recent duel (or null)
+      responses:
+        "200":
+          description: Current duel
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DuelResponse"
+
+  /duels/record:
+    get:
+      operationId: getDuelRecord
+      tags: [duel]
+      summary: Get the caller's durable win/loss record and recent duels
+      responses:
+        "200":
+          description: Duel record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DuelRecord"
+
+  /duels/challenge:
+    post:
+      operationId: challengeDuel
+      tags: [duel]
+      summary: Challenge an encountered player to a PvP duel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChallengeDuelInput"
+      responses:
+        "200":
+          description: Challenge created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DuelResponse"
+
+  /duels/{id}:
+    get:
+      operationId: getDuel
+      tags: [duel]
+      summary: Get a duel's full detail (incl. resolved result) for playback
+      parameters:
+        - $ref: "#/components/parameters/DuelId"
+      responses:
+        "200":
+          description: Duel detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DuelResponse"
+
+  /duels/{id}/accept:
+    post:
+      operationId: acceptDuel
+      tags: [duel]
+      summary: Accept a pending duel challenge (resolves the fight server-side)
+      parameters:
+        - $ref: "#/components/parameters/DuelId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AcceptDuelInput"
+      responses:
+        "200":
+          description: Duel accepted and resolved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DuelResponse"
+
+  /duels/{id}/decline:
+    post:
+      operationId: declineDuel
+      tags: [duel]
+      summary: Decline a pending duel challenge
+      parameters:
+        - $ref: "#/components/parameters/DuelId"
+      responses:
+        "200":
+          description: Duel declined
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DuelResponse"
+
+  /duels/{id}/cancel:
+    post:
+      operationId: cancelDuel
+      tags: [duel]
+      summary: Cancel a still-pending duel challenge
+      parameters:
+        - $ref: "#/components/parameters/DuelId"
+      responses:
+        "200":
+          description: Duel cancelled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DuelResponse"
+
+  /duels/{id}/complete:
+    post:
+      operationId: completeDuel
+      tags: [duel]
+      summary: Mark a resolved duel as finished after leaving the arena
+      parameters:
+        - $ref: "#/components/parameters/DuelId"
+      responses:
+        "200":
+          description: Duel completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DuelResponse"
+
+components:
+  parameters:
+    LabyrinthId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    RunId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    PlayerItemId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    TradeId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    PartyId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    DuelId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    ListingId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+  schemas:
+    TradeCurrency:
+      type: object
+      properties:
+        gold:
+          type: integer
+        ore:
+          type: integer
+        dust:
+          type: integer
+        keys:
+          type: integer
+        labToken:
+          type: integer
+      required: [gold, ore, dust, keys, labToken]
+
+    TradeOfferItem:
+      type: object
+      properties:
+        playerItemId:
+          type: integer
+        templateKey:
+          type: string
+        name:
+          type: string
+        icon:
+          type: string
+        rarity:
+          type: string
+        slot:
+          type: string
+        level:
+          type: integer
+        value:
+          type: integer
+      required:
+        - playerItemId
+        - templateKey
+        - name
+        - icon
+        - rarity
+        - slot
+        - level
+        - value
+
+    TradeSide:
+      type: object
+      properties:
+        userId:
+          type: integer
+        displayName:
+          type: string
+        avatarUrl:
+          type: string
+        confirmed:
+          type: boolean
+        currency:
+          $ref: "#/components/schemas/TradeCurrency"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/TradeOfferItem"
+      required:
+        - userId
+        - displayName
+        - avatarUrl
+        - confirmed
+        - currency
+        - items
+
+    TradeSession:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [pending, active, settled, cancelled, declined]
+        version:
+          type: integer
+        role:
+          type: string
+          enum: [initiator, recipient]
+        me:
+          $ref: "#/components/schemas/TradeSide"
+        them:
+          $ref: "#/components/schemas/TradeSide"
+        bothConfirmed:
+          type: boolean
+        note:
+          type: string
+          nullable: true
+        updatedAt:
+          type: string
+      required:
+        - id
+        - status
+        - version
+        - role
+        - me
+        - them
+        - bothConfirmed
+        - note
+        - updatedAt
+
+    TradeEnvelope:
+      type: object
+      properties:
+        trade:
+          $ref: "#/components/schemas/TradeSession"
+      required: [trade]
+
+    TradeActiveEnvelope:
+      type: object
+      properties:
+        trade:
+          oneOf:
+            - $ref: "#/components/schemas/TradeSession"
+            - type: "null"
+          nullable: true
+      required: [trade]
+
+    TradeInviteInput:
+      type: object
+      properties:
+        toUserId:
+          type: integer
+      required: [toUserId]
+
+    TradeRespondInput:
+      type: object
+      properties:
+        accept:
+          type: boolean
+      required: [accept]
+
+    TradeOfferInput:
+      type: object
+      properties:
+        itemIds:
+          type: array
+          items:
+            type: integer
+        currency:
+          $ref: "#/components/schemas/TradeCurrency"
+      required: [itemIds, currency]
+
+    TradeConfirmInput:
+      type: object
+      properties:
+        confirmed:
+          type: boolean
+      required: [confirmed]
+
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    Ok:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    IdempotentInput:
+      type: object
+      required: [idempotencyKey]
+      properties:
+        idempotencyKey:
+          type: string
+          minLength: 1
+
+    MarketplaceListing:
+      type: object
+      required:
+        - id
+        - priceCents
+        - feeCents
+        - status
+        - sellerUserId
+        - sellerName
+        - sellerAvatarUrl
+        - isOwn
+        - playerItemId
+        - item
+        - createdAt
+      properties:
+        id:
+          type: integer
+        priceCents:
+          type: integer
+          description: Listing price in integer USDC cents.
+        feeCents:
+          type: integer
+          description: Marketplace fee in USDC cents deducted from seller proceeds on sale.
+        status:
+          type: string
+          description: active | sold | cancelled
+        sellerUserId:
+          type: integer
+        sellerName:
+          type: string
+        sellerAvatarUrl:
+          type: string
+        isOwn:
+          type: boolean
+          description: True when the viewing player owns this listing.
+        playerItemId:
+          type: integer
+        item:
+          $ref: "#/components/schemas/MarketplaceItem"
+        createdAt:
+          type: string
+
+    MarketplaceItem:
+      type: object
+      required: [id, template, level, value]
+      properties:
+        id:
+          type: integer
+        template:
+          $ref: "#/components/schemas/ItemTemplate"
+        level:
+          type: integer
+        value:
+          type: integer
+        stats:
+          $ref: "#/components/schemas/ItemStats"
+
+    UsdcDepositInput:
+      type: object
+      required: [idempotencyKey, amountCents]
+      properties:
+        idempotencyKey:
+          type: string
+          minLength: 1
+        amountCents:
+          type: integer
+          description: USDC amount to credit, in integer cents.
+
+    UsdcDepositResult:
+      type: object
+      required: [balances]
+      properties:
+        balances:
+          $ref: "#/components/schemas/Balances"
+
+    CreateListingInput:
+      type: object
+      required: [idempotencyKey, playerItemId, priceCents]
+      properties:
+        idempotencyKey:
+          type: string
+          minLength: 1
+        playerItemId:
+          type: integer
+        priceCents:
+          type: integer
+          description: Listing price in integer USDC cents.
+
+    CreateListingResult:
+      type: object
+      required: [listing]
+      properties:
+        listing:
+          $ref: "#/components/schemas/MarketplaceListing"
+
+    CancelListingResult:
+      type: object
+      required: [ok, listingId]
+      properties:
+        ok:
+          type: boolean
+        listingId:
+          type: integer
+
+    BuyListingResult:
+      type: object
+      required: [listingId, playerItemId, pricePaidCents, feeCents, balances]
+      properties:
+        listingId:
+          type: integer
+        playerItemId:
+          type: integer
+        pricePaidCents:
+          type: integer
+        feeCents:
+          type: integer
+        balances:
+          $ref: "#/components/schemas/Balances"
+
+    Material:
+      type: object
+      required: [key, name, amount]
+      properties:
+        key:
+          type: string
+        name:
+          type: string
+        amount:
+          type: integer
+        icon:
+          type: string
+
+    Balances:
+      type: object
+      required: [gold, ore, dust, keys, labToken, usdc, materials]
+      properties:
+        gold:
+          type: integer
+        ore:
+          type: integer
+        dust:
+          type: integer
+        keys:
+          type: integer
+        labToken:
+          type: integer
+        usdc:
+          type: integer
+          description: USDC balance in integer cents (mock on-ramp until real on-chain USDC lands).
+        materials:
+          type: array
+          items:
+            $ref: "#/components/schemas/Material"
+
+    MockWallet:
+      type: object
+      required: [walletAddress, displayName, avatarUrl, isPrimary]
+      properties:
+        walletAddress:
+          type: string
+        displayName:
+          type: string
+        avatarUrl:
+          type: string
+        isPrimary:
+          type: boolean
+        tagline:
+          type: string
+
+    AuthChallengeInput:
+      type: object
+      required: [walletAddress, chainId]
+      properties:
+        walletAddress:
+          type: string
+          minLength: 1
+        chainId:
+          type: integer
+          enum: [4663, 46630]
+
+    AuthChallenge:
+      type: object
+      required: [walletAddress, chainId, nonce, expiresAt, message]
+      properties:
+        walletAddress:
+          type: string
+        chainId:
+          type: integer
+        nonce:
+          type: string
+        expiresAt:
+          type: string
+        message:
+          type: string
+
+    AuthVerifyInput:
+      type: object
+      required: [walletAddress, chainId, message, signature]
+      properties:
+        walletAddress:
+          type: string
+          minLength: 1
+        chainId:
+          type: integer
+          enum: [4663, 46630]
+        message:
+          type: string
+          minLength: 1
+        signature:
+          type: string
+          minLength: 1
+
+    AuthConfig:
+      type: object
+      required:
+        [network, environment, chainId, chainIdHex, rpcUrl, explorerUrl,
+         nativeCurrency, settlementMode, tokenContracts, treasuryAddress,
+         mockWalletAuthEnabled]
+      properties:
+        network:
+          type: string
+        environment:
+          type: string
+          enum: [mainnet, testnet]
+        chainId:
+          type: integer
+        chainIdHex:
+          type: string
+        rpcUrl:
+          type: string
+          format: uri
+        explorerUrl:
+          type: string
+          format: uri
+        nativeCurrency:
+          type: object
+          required: [name, symbol, decimals]
+          properties:
+            name:
+              type: string
+            symbol:
+              type: string
+            decimals:
+              type: integer
+        settlementMode:
+          type: string
+          enum: [custodial_ledger, onchain]
+        tokenContracts:
+          type: object
+          required: [labToken, usdc]
+          properties:
+            labToken:
+              type: ["string", "null"]
+            usdc:
+              type: ["string", "null"]
+        treasuryAddress:
+          type: ["string", "null"]
+        mockWalletAuthEnabled:
+          type: boolean
+
+    Player:
+      type: object
+      required:
+        - id
+        - walletAddress
+        - displayName
+        - avatarUrl
+        - balances
+        - ownedLabyrinthId
+        - createdAt
+      properties:
+        id:
+          type: integer
+        walletAddress:
+          type: string
+        displayName:
+          type: string
+        avatarUrl:
+          type: string
+        tagline:
+          type: ["string", "null"]
+        balances:
+          $ref: "#/components/schemas/Balances"
+        ownedLabyrinthId:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+
+    LabyrinthClaimInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        biome:
+          type: string
+
+    LabyrinthUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        biome:
+          type: string
+
+    Labyrinth:
+      type: object
+      required:
+        - id
+        - ownerUserId
+        - ownerName
+        - ownerAvatarUrl
+        - name
+        - description
+        - biome
+        - level
+        - depth
+        - chamberCount
+        - rareNodeCount
+        - published
+        - tollGateUnlocked
+        - entryFee
+        - ratingAverage
+        - ratingCount
+        - runsToday
+        - runsAllTime
+        - rewardValueToday
+        - dailyRunCapacity
+        - dailyRewardCapacity
+        - appealScore
+        - bossActive
+        - isOwner
+        - createdAt
+      properties:
+        id:
+          type: integer
+        ownerUserId:
+          type: integer
+        ownerName:
+          type: string
+        ownerAvatarUrl:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        biome:
+          type: string
+        level:
+          type: integer
+        depth:
+          type: integer
+        chamberCount:
+          type: integer
+        rareNodeCount:
+          type: integer
+        published:
+          type: boolean
+        tollGateUnlocked:
+          type: boolean
+        entryFee:
+          type: integer
+        ratingAverage:
+          type: number
+        ratingCount:
+          type: integer
+        runsToday:
+          type: integer
+        runsAllTime:
+          type: integer
+        rewardValueToday:
+          type: integer
+        dailyRunCapacity:
+          type: integer
+        dailyRewardCapacity:
+          type: integer
+        appealScore:
+          type: integer
+        bossActive:
+          type: boolean
+        isOwner:
+          type: boolean
+        accentColor:
+          type: string
+        createdAt:
+          type: string
+
+    LabyrinthOrNull:
+      oneOf:
+        - $ref: "#/components/schemas/Labyrinth"
+        - type: "null"
+
+    LootTableEntry:
+      type: object
+      required: [kind, label, rarity, chance, minValue, maxValue]
+      properties:
+        kind:
+          type: string
+          enum: [currency, material, item]
+        label:
+          type: string
+        rarity:
+          type: string
+          enum: [common, uncommon, rare, epic, legendary]
+        chance:
+          type: number
+        minValue:
+          type: integer
+        maxValue:
+          type: integer
+        icon:
+          type: string
+
+    LabyrinthPreview:
+      type: object
+      required:
+        - labyrinth
+        - chambers
+        - lootTable
+        - estimatedClearSeconds
+        - difficulty
+      properties:
+        labyrinth:
+          $ref: "#/components/schemas/Labyrinth"
+        chambers:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChamberSummary"
+        lootTable:
+          type: array
+          items:
+            $ref: "#/components/schemas/LootTableEntry"
+        estimatedClearSeconds:
+          type: integer
+        difficulty:
+          type: string
+          enum: [novice, adept, veteran, master, mythic]
+
+    ChamberSummary:
+      type: object
+      required: [id, name, biome, difficulty, enemyCount, hasBoss, lootTier]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        biome:
+          type: string
+        difficulty:
+          type: integer
+        enemyCount:
+          type: integer
+        hasBoss:
+          type: boolean
+        lootTier:
+          type: integer
+
+    Rating:
+      type: object
+      required: [id, labyrinthId, raterName, raterAvatarUrl, stars, createdAt]
+      properties:
+        id:
+          type: integer
+        labyrinthId:
+          type: integer
+        raterName:
+          type: string
+        raterAvatarUrl:
+          type: string
+        stars:
+          type: integer
+        comment:
+          type: ["string", "null"]
+        difficultyVote:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    RatingInput:
+      type: object
+      required: [stars, idempotencyKey]
+      properties:
+        stars:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+        difficultyVote:
+          type: string
+          enum: [too_easy, balanced, brutal]
+        idempotencyKey:
+          type: string
+          minLength: 1
+
+    UpgradeCatalogItem:
+      type: object
+      required:
+        - key
+        - name
+        - description
+        - category
+        - maxLevel
+        - baseCostGold
+        - costScaling
+        - effectSummary
+      properties:
+        key:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+          enum: [capacity, reward, appeal, defense, utility]
+        maxLevel:
+          type: integer
+        baseCostGold:
+          type: integer
+        costScaling:
+          type: integer
+        effectSummary:
+          type: string
+        icon:
+          type: string
+
+    LabyrinthUpgrade:
+      type: object
+      required: [key, name, level, maxLevel, nextCostGold, effectSummary, category]
+      properties:
+        key:
+          type: string
+        name:
+          type: string
+        level:
+          type: integer
+        maxLevel:
+          type: integer
+        nextCostGold:
+          type: ["integer", "null"]
+        effectSummary:
+          type: string
+        category:
+          type: string
+
+    UpgradePurchaseInput:
+      type: object
+      required: [upgradeKey, idempotencyKey]
+      properties:
+        upgradeKey:
+          type: string
+          minLength: 1
+        idempotencyKey:
+          type: string
+          minLength: 1
+
+    UpgradePurchaseResult:
+      type: object
+      required: [labyrinth, balances]
+      properties:
+        labyrinth:
+          $ref: "#/components/schemas/Labyrinth"
+        balances:
+          $ref: "#/components/schemas/Balances"
+        upgrade:
+          $ref: "#/components/schemas/LabyrinthUpgrade"
+
+    RoomType:
+      type: object
+      required:
+        - key
+        - role
+        - size
+        - name
+        - description
+        - templateCount
+        - sampleNames
+        - cost
+        - starter
+        - unlocked
+      properties:
+        key:
+          type: string
+        role:
+          type: string
+          enum: [entry, combat, gauntlet, hazard, treasure, boss]
+        size:
+          type: string
+          enum: [small, medium, large]
+        name:
+          type: string
+        description:
+          type: string
+        templateCount:
+          type: integer
+        sampleNames:
+          type: array
+          items:
+            type: string
+        cost:
+          type: integer
+        starter:
+          type: boolean
+        unlocked:
+          type: boolean
+
+    RoomUnlockInput:
+      type: object
+      required: [roomKey, idempotencyKey]
+      properties:
+        roomKey:
+          type: string
+          minLength: 1
+        idempotencyKey:
+          type: string
+          minLength: 1
+
+    RoomUnlockResult:
+      type: object
+      required: [labyrinth, balances, roomTypes]
+      properties:
+        labyrinth:
+          $ref: "#/components/schemas/Labyrinth"
+        balances:
+          $ref: "#/components/schemas/Balances"
+        roomTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoomType"
+
+    SuggestedFee:
+      type: object
+      required:
+        - appealScore
+        - suggestedMin
+        - suggestedMax
+        - currentFee
+        - tollGateUnlocked
+      properties:
+        appealScore:
+          type: integer
+        suggestedMin:
+          type: integer
+        suggestedMax:
+          type: integer
+        currentFee:
+          type: integer
+        tollGateUnlocked:
+          type: boolean
+        warning:
+          type: ["string", "null"]
+        rationale:
+          type: string
+
+    TollGateFeeInput:
+      type: object
+      required: [entryFee]
+      properties:
+        entryFee:
+          type: integer
+          minimum: 0
+
+    RunStartInput:
+      type: object
+      required: [labyrinthId, idempotencyKey]
+      properties:
+        labyrinthId:
+          type: integer
+        idempotencyKey:
+          type: string
+          minLength: 1
+
+    Vec2:
+      type: object
+      required: [x, y]
+      properties:
+        x:
+          type: number
+        y:
+          type: number
+
+    ChamberSpawn:
+      type: object
+      required: [id, type, x, y]
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [player_start, enemy, elite, boss, node, chest, portal, hazard]
+        x:
+          type: number
+        y:
+          type: number
+        variant:
+          type: string
+        hp:
+          type: integer
+        damage:
+          type: integer
+        speed:
+          type: number
+        lootTier:
+          type: integer
+        label:
+          type: string
+
+    ChamberObstacle:
+      type: object
+      required: [x, y, width, height]
+      properties:
+        x:
+          type: number
+        y:
+          type: number
+        width:
+          type: number
+        height:
+          type: number
+        kind:
+          type: string
+
+    ChamberTileGrid:
+      type: object
+      required: [cols, rows, cell, data]
+      properties:
+        cols:
+          type: integer
+        rows:
+          type: integer
+        cell:
+          type: number
+        data:
+          type: string
+
+    ChamberLayout:
+      type: object
+      required: [id, name, biome, width, height, accentColor, spawns, obstacles]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        biome:
+          type: string
+        width:
+          type: number
+        height:
+          type: number
+        accentColor:
+          type: string
+        backgroundStyle:
+          type: string
+        spawns:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChamberSpawn"
+        obstacles:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChamberObstacle"
+        tiles:
+          $ref: "#/components/schemas/ChamberTileGrid"
+        hazardZones:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChamberObstacle"
+        doors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChamberObstacle"
+        role:
+          type: string
+        sizeClass:
+          type: string
+
+    Run:
+      type: object
+      required:
+        - id
+        - labyrinthId
+        - labyrinthName
+        - biome
+        - visitorUserId
+        - visitorName
+        - ownerUserId
+        - status
+        - isOwnerRun
+        - isPaid
+        - entryFee
+        - ownerEntryShare
+        - treasuryEntryShare
+        - startedAt
+      properties:
+        id:
+          type: integer
+        labyrinthId:
+          type: integer
+        labyrinthName:
+          type: string
+        biome:
+          type: string
+        visitorUserId:
+          type: integer
+        visitorName:
+          type: string
+        ownerUserId:
+          type: integer
+        status:
+          type: string
+          enum: [in_progress, completed, abandoned]
+        isOwnerRun:
+          type: boolean
+        isPaid:
+          type: boolean
+        entryFee:
+          type: integer
+        ownerEntryShare:
+          type: integer
+        treasuryEntryShare:
+          type: integer
+        startedAt:
+          type: string
+        completedAt:
+          type: ["string", "null"]
+        coopPartyId:
+          type: ["string", "null"]
+        partySize:
+          type: integer
+        chambers:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChamberLayout"
+        loadout:
+          $ref: "#/components/schemas/Loadout"
+        summary:
+          $ref: "#/components/schemas/RunSummaryOrNull"
+
+    RunCompleteInput:
+      type: object
+      required:
+        - idempotencyKey
+        - cleared
+        - enemiesDefeated
+        - nodesHarvested
+        - chestsOpened
+        - bossDefeated
+        - timeSeconds
+      properties:
+        idempotencyKey:
+          type: string
+          minLength: 1
+        cleared:
+          type: boolean
+        enemiesDefeated:
+          type: integer
+          minimum: 0
+        nodesHarvested:
+          type: integer
+          minimum: 0
+        chestsOpened:
+          type: integer
+          minimum: 0
+        bossDefeated:
+          type: boolean
+        timeSeconds:
+          type: integer
+          minimum: 0
+        damageTaken:
+          type: integer
+          minimum: 0
+
+    RewardBundle:
+      type: object
+      required: [gold, ore, dust, keys, materials, totalValue]
+      properties:
+        gold:
+          type: integer
+        ore:
+          type: integer
+        dust:
+          type: integer
+        keys:
+          type: integer
+        materials:
+          type: array
+          items:
+            $ref: "#/components/schemas/Material"
+        totalValue:
+          type: integer
+
+    ItemDropResult:
+      type: object
+      required: [templateKey, name, rarity, slot, value]
+      properties:
+        templateKey:
+          type: string
+        name:
+          type: string
+        rarity:
+          type: string
+        slot:
+          type: string
+        value:
+          type: integer
+        playerItemId:
+          type: integer
+
+    RunSummary:
+      type: object
+      required:
+        - run
+        - cleared
+        - visitorRewards
+        - itemDrops
+        - ownerDropShareValue
+        - ownerEntryShare
+        - treasuryEntryShare
+        - balances
+      properties:
+        run:
+          $ref: "#/components/schemas/Run"
+        cleared:
+          type: boolean
+        visitorRewards:
+          $ref: "#/components/schemas/RewardBundle"
+        itemDrops:
+          type: array
+          items:
+            $ref: "#/components/schemas/ItemDropResult"
+        ownerDropShareValue:
+          type: integer
+        ownerEntryShare:
+          type: integer
+        treasuryEntryShare:
+          type: integer
+        balances:
+          $ref: "#/components/schemas/Balances"
+
+    RunSummaryOrNull:
+      oneOf:
+        - $ref: "#/components/schemas/RunSummary"
+        - type: "null"
+
+    Treasury:
+      type: object
+      required: [labTokenBalance, totalEntryFeesCollected, totalRuns, updatedAt]
+      properties:
+        labTokenBalance:
+          type: integer
+        totalEntryFeesCollected:
+          type: integer
+        totalRuns:
+          type: integer
+        updatedAt:
+          type: string
+
+    OwnerEarnings:
+      type: object
+      required:
+        - hasLabyrinth
+        - pendingDropShareValue
+        - pendingEntryShare
+        - pendingTotal
+        - lifetimeDropShareValue
+        - lifetimeEntryShare
+        - dropShareToday
+        - entryShareToday
+      properties:
+        hasLabyrinth:
+          type: boolean
+        pendingDropShareValue:
+          type: integer
+        pendingEntryShare:
+          type: integer
+        pendingTotal:
+          type: integer
+        lifetimeDropShareValue:
+          type: integer
+        lifetimeEntryShare:
+          type: integer
+        dropShareToday:
+          type: integer
+        entryShareToday:
+          type: integer
+
+    CollectResult:
+      type: object
+      required: [collectedLabToken, balances, earnings]
+      properties:
+        collectedLabToken:
+          type: integer
+        balances:
+          $ref: "#/components/schemas/Balances"
+        earnings:
+          $ref: "#/components/schemas/OwnerEarnings"
+
+    LedgerEntry:
+      type: object
+      required: [id, type, description, amount, currency, createdAt]
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+        description:
+          type: string
+        amount:
+          type: integer
+        currency:
+          type: string
+        createdAt:
+          type: string
+
+    ActivityEntry:
+      type: object
+      required: [id, type, message, actorName, actorAvatarUrl, createdAt]
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+        message:
+          type: string
+        actorName:
+          type: string
+        actorAvatarUrl:
+          type: string
+        labyrinthId:
+          type: ["integer", "null"]
+        labyrinthName:
+          type: ["string", "null"]
+        value:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+
+    LeaderboardEntry:
+      type: object
+      required:
+        - rank
+        - ownerName
+        - ownerAvatarUrl
+        - labyrinthName
+        - lifetimeEarnings
+        - runsHosted
+        - ratingAverage
+      properties:
+        rank:
+          type: integer
+        ownerName:
+          type: string
+        ownerAvatarUrl:
+          type: string
+        labyrinthName:
+          type: string
+        lifetimeEarnings:
+          type: integer
+        runsHosted:
+          type: integer
+        ratingAverage:
+          type: number
+
+    WorldStats:
+      type: object
+      required:
+        - totalLabyrinths
+        - publishedLabyrinths
+        - totalRuns
+        - runsToday
+        - treasuryBalance
+        - activeOwners
+        - totalValueDropped
+      properties:
+        totalLabyrinths:
+          type: integer
+        publishedLabyrinths:
+          type: integer
+        totalRuns:
+          type: integer
+        runsToday:
+          type: integer
+        treasuryBalance:
+          type: integer
+        activeOwners:
+          type: integer
+        totalValueDropped:
+          type: integer
+
+    ItemStats:
+      type: object
+      properties:
+        attack:
+          type: integer
+        defense:
+          type: integer
+        health:
+          type: integer
+        moveSpeed:
+          type: integer
+        attackSpeed:
+          type: integer
+        range:
+          type: integer
+        critChance:
+          type: integer
+        lootBonus:
+          type: integer
+        cooldownReduction:
+          type: integer
+
+    ItemTemplate:
+      type: object
+      required:
+        - key
+        - name
+        - description
+        - slot
+        - category
+        - rarity
+        - damageType
+        - baseValue
+        - stats
+      properties:
+        key:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        slot:
+          type: string
+          enum: [weapon, armor, boots, relic, ability_stone, charm, helmet, cape, shoulders, gloves, pants, shield, neck]
+        category:
+          type: string
+        rarity:
+          type: string
+          enum: [common, uncommon, rare, epic, legendary]
+        damageType:
+          type: string
+        baseValue:
+          type: integer
+        stats:
+          $ref: "#/components/schemas/ItemStats"
+        abilityKey:
+          type: ["string", "null"]
+        abilityName:
+          type: ["string", "null"]
+        abilityDescription:
+          type: ["string", "null"]
+        icon:
+          type: string
+        spriteLayers:
+          type: object
+          additionalProperties:
+            type: string
+          description: "Map of LPC layer slot names to relative asset paths within public/"
+
+    PlayerItem:
+      type: object
+      required:
+        - id
+        - template
+        - level
+        - equipped
+        - slot
+        - value
+        - acquiredAt
+      properties:
+        id:
+          type: integer
+        template:
+          $ref: "#/components/schemas/ItemTemplate"
+        level:
+          type: integer
+        equipped:
+          type: boolean
+        slot:
+          type: string
+        value:
+          type: integer
+        stats:
+          $ref: "#/components/schemas/ItemStats"
+        acquiredAt:
+          type: string
+        listed:
+          type: boolean
+          description: True when this item has an active marketplace listing (escrowed).
+
+    LoadoutSlots:
+      type: object
+      required: [weapon, armor, boots, relic, abilityStone, charm, abilityStone2, helmet, cape, shoulders, gloves, pants, shield, neck]
+      properties:
+        weapon:
+          $ref: "#/components/schemas/PlayerItemOrNull"
+        armor:
+          $ref: "#/components/schemas/PlayerItemOrNull"
+        boots:
+          $ref: "#/components/schemas/PlayerItemOrNull"
+        relic:
+          $ref: "#/components/schemas/PlayerItemOrNull"
+        abilityStone:
+          $ref: "#/components/schemas/PlayerItemOrNull"
+        abilityStone2:
+          $ref: "#/components/schemas/PlayerItemOrNull"
+        charm:
+          $ref: "#/components/schemas/PlayerItemOrNull"
+        helmet:
+          $ref: "#/components/schemas/PlayerItemOrNull"
+        cape:
+          $ref: "#/components/schemas/PlayerItemOrNull"
+        shoulders:
+          $ref: "#/components/schemas/PlayerItemOrNull"
+        gloves:
+          $ref: "#/components/schemas/PlayerItemOrNull"
+        pants:
+          $ref: "#/components/schemas/PlayerItemOrNull"
+        shield:
+          $ref: "#/components/schemas/PlayerItemOrNull"
+        neck:
+          $ref: "#/components/schemas/PlayerItemOrNull"
+
+    PlayerItemOrNull:
+      oneOf:
+        - $ref: "#/components/schemas/PlayerItem"
+        - type: "null"
+
+    Loadout:
+      type: object
+      required: [slots, combatStats, archetype]
+      properties:
+        slots:
+          $ref: "#/components/schemas/LoadoutSlots"
+        combatStats:
+          $ref: "#/components/schemas/ItemStats"
+        archetype:
+          type: string
+        archetypeDescription:
+          type: string
+
+    EquipInput:
+      type: object
+      required: [playerItemId, slot]
+      properties:
+        playerItemId:
+          type: integer
+        slot:
+          type: string
+          enum: [weapon, armor, boots, relic, abilityStone, abilityStone2, charm, helmet, cape, shoulders, gloves, pants, shield, neck]
+
+    UnequipInput:
+      type: object
+      required: [slot]
+      properties:
+        slot:
+          type: string
+          enum: [weapon, armor, boots, relic, abilityStone, abilityStone2, charm, helmet, cape, shoulders, gloves, pants, shield, neck]
+
+    CraftingRecipe:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - resultTemplate
+        - costGold
+        - costMaterials
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        resultTemplate:
+          $ref: "#/components/schemas/ItemTemplate"
+        costGold:
+          type: integer
+        costMaterials:
+          type: array
+          items:
+            $ref: "#/components/schemas/Material"
+
+    CraftInput:
+      type: object
+      required: [recipeId, idempotencyKey]
+      properties:
+        recipeId:
+          type: integer
+        idempotencyKey:
+          type: string
+          minLength: 1
+
+    ItemMutationResult:
+      type: object
+      required: [item, balances]
+      properties:
+        item:
+          $ref: "#/components/schemas/PlayerItem"
+        balances:
+          $ref: "#/components/schemas/Balances"
+
+    BulkDisposeInput:
+      type: object
+      required: [playerItemIds, mode, idempotencyKey]
+      properties:
+        playerItemIds:
+          type: array
+          minItems: 1
+          items:
+            type: integer
+        mode:
+          type: string
+          enum: [sell, scrap]
+        idempotencyKey:
+          type: string
+          minLength: 1
+
+    BulkDisposeResult:
+      type: object
+      required: [mode, disposedCount, removedIds, goldEarned, materialsEarned, balances]
+      properties:
+        mode:
+          type: string
+          enum: [sell, scrap]
+        disposedCount:
+          type: integer
+        removedIds:
+          type: array
+          items:
+            type: integer
+        goldEarned:
+          type: integer
+        materialsEarned:
+          type: array
+          items:
+            $ref: "#/components/schemas/Material"
+        balances:
+          $ref: "#/components/schemas/Balances"
+
+    ChainTransaction:
+      type: object
+      required: [id, transactionReference, kind, status, amount, currency, network, chainId, createdAt]
+      properties:
+        id:
+          type: integer
+        transactionReference:
+          type: string
+        kind:
+          type: string
+        status:
+          type: string
+        amount:
+          type: integer
+        currency:
+          type: string
+        memo:
+          type: ["string", "null"]
+        network:
+          type: string
+        chainId:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+
+    ChainStatus:
+      type: object
+      required: [network, connected, chainId, explorerUrl, settlementMode, note]
+      properties:
+        network:
+          type: string
+        connected:
+          type: boolean
+        chainId:
+          type: integer
+        explorerUrl:
+          type: string
+          format: uri
+        settlementMode:
+          type: string
+        note:
+          type: string
+
+    CoopMember:
+      type: object
+      required: [userId, displayName, avatarUrl, ready, status, runId, chamberIndex, x, y, facing, moving, hp, maxHp]
+      properties:
+        userId:
+          type: integer
+        displayName:
+          type: string
+        avatarUrl:
+          type: string
+        ready:
+          type: boolean
+        status:
+          type: string
+          enum: [joined, in_run, finished, downed]
+        runId:
+          type: ["integer", "null"]
+        chamberIndex:
+          type: integer
+        x:
+          type: number
+        y:
+          type: number
+        facing:
+          type: number
+        moving:
+          type: boolean
+        hp:
+          type: number
+        maxHp:
+          type: number
+
+    CoopInvite:
+      type: object
+      required: [userId, displayName]
+      properties:
+        userId:
+          type: integer
+        displayName:
+          type: string
+
+    CoopParty:
+      type: object
+      required: [partyId, hostUserId, labyrinthId, status, members, invites, partySize]
+      properties:
+        partyId:
+          type: string
+        hostUserId:
+          type: integer
+        labyrinthId:
+          type: integer
+        status:
+          type: string
+          enum: [forming, in_run, finished]
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/CoopMember"
+        invites:
+          type: array
+          items:
+            $ref: "#/components/schemas/CoopInvite"
+        partySize:
+          type: integer
+
+    CoopInvitation:
+      type: object
+      required: [partyId, hostUserId, hostName, labyrinthId, labyrinthName, memberCount]
+      properties:
+        partyId:
+          type: string
+        hostUserId:
+          type: integer
+        hostName:
+          type: string
+        labyrinthId:
+          type: integer
+        labyrinthName:
+          type: string
+        memberCount:
+          type: integer
+
+    CoopPartyResponse:
+      type: object
+      required: [party]
+      properties:
+        party:
+          oneOf:
+            - $ref: "#/components/schemas/CoopParty"
+            - type: "null"
+        invitations:
+          type: array
+          items:
+            $ref: "#/components/schemas/CoopInvitation"
+
+    CreateCoopPartyInput:
+      type: object
+      required: [labyrinthId]
+      properties:
+        labyrinthId:
+          type: integer
+
+    InviteCoopInput:
+      type: object
+      required: [targetUserId]
+      properties:
+        targetUserId:
+          type: integer
+
+    CoopReadyInput:
+      type: object
+      required: [ready]
+      properties:
+        ready:
+          type: boolean
+
+    CoopRunStarted:
+      type: object
+      required: [party, excluded]
+      properties:
+        party:
+          $ref: "#/components/schemas/CoopParty"
+        excluded:
+          type: array
+          items:
+            type: integer
+
+    DuelParticipant:
+      type: object
+      required: [userId, displayName, avatarUrl, spriteLayers, maxHp]
+      properties:
+        userId:
+          type: integer
+        displayName:
+          type: string
+        avatarUrl:
+          type: string
+        spriteLayers:
+          type: object
+          additionalProperties:
+            type: string
+        maxHp:
+          type: integer
+
+    DuelEvent:
+      type: object
+      required: [tMs, actorUserId, targetUserId, kind, damage, targetHp]
+      properties:
+        tMs:
+          type: integer
+        actorUserId:
+          type: integer
+        targetUserId:
+          type: integer
+        kind:
+          type: string
+          enum: [attack, crit, ability]
+        damage:
+          type: integer
+        targetHp:
+          type: integer
+        abilityName:
+          type: string
+
+    DuelResult:
+      type: object
+      required: [winnerUserId, loserUserId, durationMs, events]
+      properties:
+        winnerUserId:
+          type: integer
+        loserUserId:
+          type: integer
+        durationMs:
+          type: integer
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/DuelEvent"
+
+    Duel:
+      type: object
+      required:
+        - id
+        - status
+        - version
+        - role
+        - challengerUserId
+        - opponentUserId
+        - challenger
+        - opponent
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [pending, active, completed, declined, cancelled]
+        version:
+          type: integer
+        role:
+          type: string
+          enum: [challenger, opponent]
+        challengerUserId:
+          type: integer
+        opponentUserId:
+          type: integer
+        challenger:
+          $ref: "#/components/schemas/DuelParticipant"
+        opponent:
+          $ref: "#/components/schemas/DuelParticipant"
+        result:
+          $ref: "#/components/schemas/DuelResult"
+          nullable: true
+        note:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    DuelResponse:
+      type: object
+      required: [duel]
+      properties:
+        duel:
+          $ref: "#/components/schemas/Duel"
+          nullable: true
+
+    ChallengeDuelInput:
+      type: object
+      required: [targetUserId]
+      properties:
+        targetUserId:
+          type: integer
+        spriteLayers:
+          type: object
+          additionalProperties:
+            type: string
+
+    AcceptDuelInput:
+      type: object
+      properties:
+        spriteLayers:
+          type: object
+          additionalProperties:
+            type: string
+
+    RecentDuel:
+      type: object
+      required:
+        - id
+        - outcome
+        - opponentUserId
+        - opponentName
+        - opponentAvatarUrl
+        - durationMs
+        - resolvedAt
+      properties:
+        id:
+          type: integer
+        outcome:
+          type: string
+          enum: [win, loss]
+        opponentUserId:
+          type: integer
+        opponentName:
+          type: string
+        opponentAvatarUrl:
+          type: string
+        durationMs:
+          type: integer
+        resolvedAt:
+          type: string
+
+    DuelRecord:
+      type: object
+      required: [wins, losses, total, winRate, recent]
+      properties:
+        wins:
+          type: integer
+        losses:
+          type: integer
+        total:
+          type: integer
+        winRate:
+          type: integer
+        recent:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecentDuel"

@@ -1,0 +1,181 @@
+Use the current Labyrinths plan as the source of truth, but build it as a reliable vertical slice.
+
+Do not attempt to fully polish every feature before the core loop works.
+
+## Build priority
+
+### Phase 1: Persistent economy foundation
+
+First complete:
+
+* database schema
+* mock wallet auth/session
+* multi-user wallet switcher
+* seeded users
+* seeded Labyrinths
+* player balances
+* treasury
+* activity log
+* economy ledger
+* server-authoritative actions
+* idempotency keys
+* transactional economy mutations
+
+The app must persist across reloads before moving deeper into gameplay.
+
+### Phase 2: Owner economy loop
+
+Then complete:
+
+* claim Labyrinth
+* rename Labyrinth
+* publish/unpublish
+* owner dashboard
+* upgrade purchase
+* Toll Gate unlock
+* set entry fee
+* suggested fee range
+* pending owner earnings
+* Collect Earnings
+* free run logic
+* paid run logic
+* 80/20 paid entry split
+* 20% owner drop-share on non-owner completed runs
+* owner self-run exemption
+
+This must work before deep combat or crafting is expanded.
+
+### Phase 3: Overworld and discovery
+
+Then complete:
+
+* high-fantasy overworld screen
+* glowing portal Labyrinth cards
+* search
+* filters
+* preview modal
+* free/paid entry display
+* reward potential display
+* owner drop-share today
+* rating
+* recent activity
+* leaderboard/wow endpoints
+
+Discovery should read from persisted database records, not hardcoded UI cards.
+
+### Phase 4: Playable Chamber vertical slice
+
+Then build one playable Chamber run.
+
+Keep it simple:
+
+* one Chamber
+* simple bounds/walls
+* player movement with WASD
+* mouse aiming
+* left-click basic attack
+* Space dash
+* Q ability
+* E ability
+* R relic ability
+* F interact
+* one rare node
+* one chest
+* 2–5 enemies
+* exit portal
+* run summary
+
+Do not overbuild combat, pathfinding, physics, procedural generation, or complex enemies.
+
+The Chamber only needs to prove:
+
+* movement
+* attacking
+* abilities
+* enemy defeat
+* node/chest interaction
+* exit/completion
+* server-side reward calculation
+* owner drop-share
+* paid entry split
+* item drops
+
+### Phase 5: Item-based build foundation
+
+Do not add fixed classes.
+
+Every player is an Adventurer.
+
+Combat identity comes from equipped items.
+
+For the MVP, implement a small but working item system:
+
+* 7-slot loadout:
+
+  * Weapon
+  * Armor
+  * Boots
+  * Relic
+  * Ability Stone 1
+  * Ability Stone 2
+  * Charm/Trinket
+* 10–20 item templates
+* starter Adventurer Kit
+* inventory panel
+* equip/unequip
+* item tooltip
+* item rarity colors
+* item value_score
+* simple crafting or item upgrade
+* server-side item drops from completed runs
+
+Equipment must visibly affect combat, but only at a simple MVP level.
+
+Examples:
+
+* sword = melee slash
+* bow = ranged projectile
+* staff = magic bolt
+* Fire Stone = Q fire projectile
+* Frost Stone = Q slowing projectile
+* Shield Charm = E shield burst
+* Blink item = dash change
+* Thunder Relic = R lightning strike
+
+Do not build:
+
+* fixed classes
+* deep affix system
+* marketplace
+* NFT items
+* PvP
+* full ARPG inventory complexity
+* large crafting tree
+* dozens of weapons
+
+### Final acceptance rule
+
+Do not mark the build complete unless this exact vertical slice works:
+
+1. State persists after reload.
+2. Switching mock wallets works.
+3. Hammad can claim a Labyrinth.
+4. Hammad can upgrade and publish it.
+5. Guest Adventurer can discover it.
+6. Guest Adventurer can run it for free.
+7. The completed free run gives visitor loot and Hammad pending 20% drop-share.
+8. Hammad running his own Labyrinth gives normal loot but no owner drop-share.
+9. Hammad unlocks Toll Gate and sets an entry fee.
+10. Guest Adventurer pays entry for a paid Labyrinth.
+11. Paid entry credits 80% to owner pending earnings and 20% to treasury.
+12. Paid run completion also generates owner 20% drop-share.
+13. Owner can collect pending earnings once.
+14. Economy ledger matches balance changes.
+15. Double-clicking complete run does not duplicate rewards.
+16. Ratings require completed non-owner runs.
+17. Player can equip at least one different weapon or ability item and see combat change.
+18. Completed runs can drop at least one item that persists in inventory.
+19. Chamber template data model exists for future VTT imports.
+20. The UI feels high-fantasy, bright, magical, collectible, and polished.
+
+Build this vertical slice first. After it works, expand crafting, more items, more Chambers, more enemies, and deeper Solana integration.

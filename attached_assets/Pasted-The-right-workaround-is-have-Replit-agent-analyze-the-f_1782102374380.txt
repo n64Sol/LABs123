@@ -1,0 +1,129 @@
+The right workaround is: have Replit/agent analyze the full LPC folder locally and export a small analysis bundle. Then you upload that small bundle here. I don’t need all 10,000+ PNGs to advise the pipeline; I need the manifest, counts, dimensions, sample paths, and maybe one composed test sprite.
+
+What to have Agent create
+
+Tell it to generate a small ZIP like:
+
+lpc_analysis_bundle.zip
+  category_counts.csv
+  dimensions_report.csv
+  asset_manifest_sample.json
+  animation_layout_report.json
+  item_generation_plan.json
+  sample_layer_paths.txt
+  license-notes.md
+  credits.txt
+  sunlit_adventurer_preview.png
+  sunlit_adventurer_metadata.json
+
+That should be tiny compared to the full LPC asset dump.
+
+Prompt for Replit Agent
+
+Use this:
+
+Analyze the full Universal LPC asset folder I downloaded.
+
+Do not move or modify the original LPC assets.
+
+Create a small analysis bundle called:
+
+/mnt/data/lpc_analysis_bundle.zip
+
+or, if in Replit:
+
+/workspace/lpc_analysis_bundle.zip
+
+The bundle should contain reports only, not the entire asset library.
+
+Scan every LPC category folder and produce:
+
+1. category_counts.csv
+   Columns:
+   - category
+   - total_files
+   - total_pngs
+   - example_paths
+
+2. dimensions_report.csv
+   For every unique PNG dimension:
+   - width
+   - height
+   - count
+   - example_paths
+
+3. asset_manifest_sample.json
+   Include up to 500 representative asset records.
+   Each record should include:
+   - id
+   - category
+   - sourcePath
+   - fileName
+   - width
+   - height
+   - inferredSlot
+   - inferredAnimationSupport
+   - notes
+
+4. animation_layout_report.json
+   Identify likely Universal LPC sheet layouts.
+   Report:
+   - common sheet sizes
+   - likely frame size
+   - likely columns
+   - likely animation row groups
+   - whether 832x1344 and 832x2944 sheets exist
+   - any categories with nonstandard sizes
+
+5. sample_layer_paths.txt
+   Pick candidate layers for one test character:
+   - body
+   - head
+   - eyes
+   - hair
+   - torso/chest
+   - legs
+   - feet
+   - weapon
+   - shield
+   - cape/back/neck if available
+   - shadow
+
+6. license-notes.md
+   Summarize all license files found.
+   Include:
+   - license names
+   - attribution requirements
+   - ShareAlike/GPL/CC notes
+   - whether generated sprites likely require credits
+   - any warning for commercial/Solana/browser-game use
+
+7. credits.txt
+   Combine all attribution/credits files found in the LPC folders.
+
+8. Try to compose one test character called Sunlit Adventurer.
+   Use real LPC layers only.
+   Output:
+   - sunlit_adventurer_preview.png
+   - sunlit_adventurer_metadata.json
+
+Do not generate hundreds of items yet.
+
+The goal is to prove:
+- all categories downloaded correctly
+- the assets share compatible LPC sheet dimensions
+- a character can be composed from layers
+- equipment can become item drops
+- we can generate a larger item library later
+
+After creating the analysis bundle, tell me the path and size.
+Why this is better
+
+This lets us avoid uploading the huge source library. You’ll only upload the small report ZIP, and I can tell you:
+
+Yes, Replit can use this cleanly
+Here are the exact item slots
+Here are the compatible sheet sizes
+Here is how many item templates we can generate
+Here is the correct layer order
+Here is the drop/equip/composer design

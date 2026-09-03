@@ -1,0 +1,21 @@
+{
+  "name": "Sunlit Adventurer",
+  "description": "Base character composed by the build pipeline into public/game/player_full.png. Each layer is one approved LPC part; swapping a sourcePath changes that slot's look. Paths are relative to the LPC source root passed via --source.",
+  "output": "public/game/player_full.png",
+  "layers": [
+    { "slot": "shadow",        "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/shadow/adult/shadow.png" },
+    { "slot": "weapon_behind", "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/weapon/sword/katana/walk/behind/katana.png", "oversize": true, "animation": "walk" },
+    { "slot": "weapon_behind", "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/weapon/sword/katana/slash/behind/katana.png", "oversize": true, "animation": "slash" },
+    { "slot": "cape",          "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/cape/solid/male/yellow.png" },
+    { "slot": "body",          "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/body/bodies/male/light.png" },
+    { "slot": "head",          "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/head/heads/human/male/light.png" },
+    { "slot": "eyes",          "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/eyes/human/adult/blue.png" },
+    { "slot": "hair",          "sourcePath": "hair_split/part1/high_ponytail/male/white.png" },
+    { "slot": "legs",          "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/legs/pantaloons/male/forest.png" },
+    { "slot": "feet",          "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/feet/boots2/male/brass.png" },
+    { "slot": "torso",         "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/torso/clothes/longsleeve/longsleeve/male/white.png" },
+    { "slot": "shield",        "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/shield/male/round_silver.png" },
+    { "slot": "weapon_fg",     "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/weapon/sword/katana/walk/katana.png", "oversize": true, "animation": "walk" },
+    { "slot": "weapon_fg",     "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/weapon/sword/katana/slash/katana.png", "oversize": true, "animation": "slash" }
+  ]
+}

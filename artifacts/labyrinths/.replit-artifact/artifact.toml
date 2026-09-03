@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Labyrinths"
+version = "1.0.0"
+id = "artifacts/labyrinths"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 9000
+
+[services.development]
+run = "pnpm --filter @workspace/labyrinths run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/labyrinths", "run", "build" ]
+publicDir = "artifacts/labyrinths/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "9000"
+BASE_PATH = "/"

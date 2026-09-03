@@ -1,0 +1,779 @@
+Add a stronger core gameplay layer to **Labyrinths**, but do **not** use fixed character classes.
+
+The game is not only an economy dashboard. It must include an active top-down Labyrinth run experience.
+
+The correct gameplay direction is:
+
+**Top-down high-fantasy battler + item/loot-based builds + crafting + player-owned Labyrinth economy.**
+
+Players should not choose fixed classes like Mage, Ranger, Knight, or Rogue.
+
+Instead, every player starts as an Adventurer, and their combat style comes from the weapons, relics, ability stones, charms, armor, and crafted items they equip.
+
+The core fantasy:
+
+**Enter Labyrinths, collect rare drops, craft gear, build your own combat loadout, and use that build to run better Labyrinths.**
+
+---
+
+# Core gameplay direction
+
+Labyrinth runs should play like short, satisfying top-down high-fantasy battler runs.
+
+Visitors enter a player-owned Labyrinth Chamber, move around, fight monsters, dodge attacks, mine rare nodes, open chests, defeat elites or bosses, then exit through a portal and receive a run summary.
+
+The economy is the meta-game.
+
+The Chamber run is the playable action layer.
+
+The item/crafting system is the long-term progression layer.
+
+---
+
+# No fixed classes
+
+Do not add fixed classes.
+
+Do not make players choose:
+
+* Mage
+* Knight
+* Ranger
+* Rogue
+* Cleric
+* Assassin
+
+Instead, players create their own combat identity through items.
+
+Examples:
+
+A player with a sword, fire relic, dash boots, and shield charm feels like a fire melee fighter.
+
+A player with a bow, frost relic, trap charm, and speed boots feels like a ranged control build.
+
+A player with a staff, lightning stone, healing charm, and mana robe feels like a spellcaster.
+
+A player with daggers, poison vial, blink charm, and crit amulet feels like a rogue-style build.
+
+But these are not classes. They are item combinations.
+
+---
+
+# Player loadout
+
+Each player should have a simple persistent equipment/loadout system.
+
+For MVP, include these slots:
+
+1. Weapon
+2. Armor
+3. Boots
+4. Relic
+5. Ability Stone 1
+6. Ability Stone 2
+7. Charm / Trinket
+
+The exact UI can be simple, but the data model should support item-based builds.
+
+The player’s equipped items determine:
+
+* basic attack
+* damage type
+* movement bonus
+* dash behavior
+* Q ability
+* E ability
+* R ultimate or special ability
+* defensive bonuses
+* loot modifiers
+
+---
+
+# Controls
+
+For desktop MVP:
+
+* WASD / Arrow Keys: move
+* Mouse: aim
+* Left Click: basic attack from equipped weapon
+* Space: dash / dodge
+* Q: ability from equipped Ability Stone 1
+* E: ability from equipped Ability Stone 2
+* R: relic ultimate or special item ability
+* F: interact with node, chest, door, or portal
+
+For MVP, desktop controls are enough. Mobile controls can come later.
+
+---
+
+# Starter gear instead of starter class
+
+Every new player starts with a basic Adventurer Kit.
+
+Starter gear:
+
+## Training Sword
+
+Basic short-range slash.
+
+## Worn Robe or Leather Vest
+
+Small HP bonus.
+
+## Traveler Boots
+
+Basic dash.
+
+## Ember Stone
+
+Q ability: small fire projectile.
+
+## Guard Charm
+
+E ability: short shield burst.
+
+## Old Relic
+
+R ability: simple area burst with a longer cooldown.
+
+These are starter placeholder items, not a class.
+
+The player can later replace every piece.
+
+---
+
+# Combat MVP
+
+Keep combat simple and reliable.
+
+Use:
+
+* player HP
+* enemy HP
+* basic damage
+* cooldowns
+* dash cooldown
+* enemy contact damage
+* enemy projectile damage
+* simple enemy AI
+* simple hit detection
+* simple death/reward drops
+
+Do not build complex skill trees, talent trees, deep inventory management, advanced physics, or pathfinding yet.
+
+The MVP should prove that equipment affects combat.
+
+Examples:
+
+* Sword changes basic attack to melee slash.
+* Bow changes basic attack to ranged arrow.
+* Staff changes basic attack to magic bolt.
+* Fire Stone gives Q fire projectile.
+* Frost Stone gives Q slowing projectile.
+* Shield Charm gives E defensive burst.
+* Blink Charm changes dash behavior.
+* Thunder Relic gives R lightning strike.
+
+---
+
+# Item types
+
+Create an item system with templates.
+
+Item categories:
+
+## Weapons
+
+Weapons determine the basic attack.
+
+Examples:
+
+* Training Sword
+* Crystal Blade
+* Ember Bow
+* Moon Staff
+* Rune Dagger
+* Sunlit Spear
+
+Weapon effects:
+
+* attack range
+* damage
+* attack speed
+* damage type
+* projectile or melee behavior
+
+## Armor
+
+Armor affects survivability.
+
+Examples:
+
+* Leather Vest
+* Sunlit Mail
+* Crystal Robe
+* Frostguard Plate
+* Sporecloak
+
+Armor effects:
+
+* HP
+* defense
+* resistance
+* movement penalty or bonus
+
+## Boots
+
+Boots affect movement and dash.
+
+Examples:
+
+* Traveler Boots
+* Blink Boots
+* Windstep Boots
+* Stoneguard Boots
+* Flame Trail Boots
+
+Boot effects:
+
+* movement speed
+* dash distance
+* dash cooldown
+* special dash effect
+
+## Ability Stones
+
+Ability Stones determine active abilities.
+
+Examples:
+
+* Ember Stone: Firebolt
+* Frost Stone: Ice Shard
+* Storm Stone: Lightning Arc
+* Vine Stone: Root Trap
+* Radiant Stone: Heal Pulse
+* Shadow Stone: Blink Strike
+
+Ability Stone effects:
+
+* Q or E active ability
+* damage type
+* cooldown
+* range
+* special effect
+
+## Relics
+
+Relics provide stronger special abilities or passive bonuses.
+
+Examples:
+
+* Celestial Relic
+* Ancient Sun Core
+* Dragon Ember
+* Crystal Heart
+* Chapel Bell
+* Goblin Coin Idol
+
+Relic effects:
+
+* R ability
+* passive bonus
+* rare build-defining effect
+
+## Charms / Trinkets
+
+Charms modify combat or loot.
+
+Examples:
+
+* Guard Charm
+* Lucky Keychain
+* Miner’s Charm
+* Boss Hunter Sigil
+* Treasure Seeker Amulet
+* Swiftstep Charm
+
+Charm effects:
+
+* loot bonus
+* crit chance
+* node yield bonus
+* chest bonus
+* boss damage bonus
+* defensive bonus
+
+---
+
+# Crafting system
+
+Add a simple crafting/upgrading direction.
+
+Players collect materials from Labyrinth runs.
+
+Materials include:
+
+* Gold
+* Ore
+* Dust
+* Keys
+* Crystal Shards
+* Ember Cores
+* Sporecaps
+* Relic Dust
+* Frost Fragments
+* Sunstone
+* Obsidian Shards
+
+For MVP, keep crafting simple.
+
+Possible MVP crafting actions:
+
+* upgrade item level
+* craft a basic item from materials
+* reroll an item affix
+* unlock an ability stone
+* improve weapon damage
+* improve relic cooldown
+
+The crafting system should be persistent and server-authoritative.
+
+The client should not directly create or upgrade items.
+
+Future Solana-ready note:
+
+Items, rare crafting materials, relics, cosmetics, and boss drops may later become on-chain assets or tradable marketplace items, but for MVP they remain database-backed mock items.
+
+---
+
+# Item rarity
+
+Use a clear rarity system:
+
+* Common
+* Uncommon
+* Rare
+* Epic
+* Legendary
+* Mythic
+
+Rarity should affect:
+
+* visual color
+* stat strength
+* drop chance
+* crafting cost
+* appeal
+* marketplace value later
+
+Suggested colors:
+
+* Common: gray/silver
+* Uncommon: green
+* Rare: blue
+* Epic: purple
+* Legendary: gold/orange
+* Mythic: radiant white/cyan
+
+---
+
+# Loot from Labyrinths
+
+Visitor rewards should come from gameplay actions:
+
+* rare node mined
+* chest opened
+* monster defeated
+* elite defeated
+* boss defeated
+* run completed
+
+Rewards can include:
+
+* currencies
+* crafting materials
+* item drops
+* ability stones
+* relic fragments
+* keys
+* cosmetics later
+
+Owner earns 20% of visitor drop value on non-owner completed runs.
+
+For MVP, owner drop-share can be calculated from currencies/materials and a simplified item value.
+
+Example:
+
+Visitor earns:
+
+* 100 Gold
+* 40 Ore
+* 10 Dust
+* Ember Stone item worth 50 value
+
+Owner pending drop-share:
+
+* 20 Gold
+* 8 Ore
+* 2 Dust
+* 10 value equivalent from the Ember Stone
+
+Do not reduce the visitor’s reward. Owner share is generated as additional owner earnings.
+
+---
+
+# How owner upgrades affect gameplay and loot
+
+Owners do not control combat directly.
+
+Owners upgrade Labyrinth infrastructure, which affects the run experience and drop tables.
+
+Examples:
+
+## Monster Lair
+
+Adds enemies and improves monster drop potential.
+
+## Boss Room
+
+Enables elite or boss encounters and rare boss loot.
+
+## Rare Node License
+
+Adds mineable rare nodes and specific material drops.
+
+## Chest Upgrade
+
+Improves chest tier and item drop chance.
+
+## Biome Unlock
+
+Changes possible room themes, enemies, and crafting materials.
+
+## Reward Capacity
+
+Increases possible reward value per day.
+
+## Chamber Capacity
+
+Allows more/larger Chambers later.
+
+## Merchant Chamber
+
+May allow visitors to find special items or crafting options.
+
+The game controls fairness, placement, reward math, difficulty, and anti-abuse.
+
+Owners buy better attractions, not guaranteed profit or unfair traps.
+
+---
+
+# Labyrinth preview should show loot value
+
+Because the game is item/loot-driven, Labyrinth preview cards must show why a Labyrinth is worth running.
+
+Show:
+
+* possible item drops
+* possible crafting materials
+* rare node types
+* chest tier
+* boss active
+* biome materials
+* difficulty
+* clear rate
+* average run time
+* reward potential
+* owner drop-share generated today
+* suggested fee range
+
+For paid Labyrinths, visitors should be able to judge whether the entry fee is worth it.
+
+Example:
+
+**Dragon Vault**
+
+Entry: 80 $LAB
+
+Possible Drops:
+
+* Ember Core
+* Obsidian Shard
+* Dragon Relic Fragment
+* Legendary Chest Chance
+
+Difficulty:
+
+Hard
+
+Clear Rate:
+
+62%
+
+Suggested Fee:
+
+60–90 $LAB
+
+---
+
+# Enemy types
+
+Add at least three simple enemy archetypes.
+
+## Melee enemy
+
+Chases the player and attacks on contact.
+
+Examples by biome:
+
+* Sunlit Ruins: Ancient Sentinel
+* Mushroom Forest: Sporeling
+* Crystal Mine: Crystal Imp
+* Cursed Chapel: Bone Guard
+* Lava Forge: Ember Brute
+
+## Ranged enemy
+
+Keeps distance and fires projectiles.
+
+Examples by biome:
+
+* Sunlit Ruins: Rune Wisp
+* Mushroom Forest: Mushroom Spitter
+* Crystal Mine: Shard Caster
+* Cursed Chapel: Chapel Wraith
+* Lava Forge: Flame Sprite
+
+## Elite enemy / mini-boss
+
+More HP, stronger attack, better reward.
+
+Examples:
+
+* Forest Guardian
+* Crystal Golem
+* Chapel Guardian
+* Goblin Champion
+* Lava Warden
+
+---
+
+# Chamber run structure
+
+For MVP, each run can be one Chamber.
+
+Each Chamber should include:
+
+* room background
+* movement bounds/walls
+* player spawn
+* rare node
+* chest
+* 2–5 enemies
+* exit portal
+* reward summary
+
+The run should prove:
+
+* movement
+* aiming
+* basic attack from equipped weapon
+* ability use from equipped items
+* dash/dodge
+* enemy defeat
+* node interaction
+* chest interaction
+* exit/completion
+* server-side reward calculation
+* owner drop-share calculation
+* paid entry split if applicable
+
+---
+
+# Data model additions
+
+Add item/crafting data models.
+
+Exact shape can vary, but include entities similar to:
+
+## item_templates
+
+* id
+* key
+* name
+* category
+* rarity
+* description
+* base_stats_json
+* ability_json
+* value_score
+* drop_tags_json
+* craft_cost_json
+
+## player_items
+
+* id
+* owner_user_id
+* item_template_id
+* level
+* stats_json
+* acquired_from_run_id
+* equipped_slot
+* created_at
+
+## player_loadouts
+
+* id
+* user_id
+* weapon_item_id
+* armor_item_id
+* boots_item_id
+* relic_item_id
+* ability_stone_1_item_id
+* ability_stone_2_item_id
+* charm_item_id
+
+## crafting_recipes
+
+* id
+* key
+* name
+* output_item_template_id
+* cost_json
+* required_level
+* unlocked_by_json
+
+## item_drops
+
+* id
+* run_id
+* user_id
+* item_template_id
+* rarity
+* value_score
+* source
+* created_at
+
+The exact schema can differ, but the prototype must support item templates, player-owned items, equipped loadout, and item drops.
+
+---
+
+# Server actions for items/crafting
+
+Add server-authoritative actions for:
+
+* get player inventory
+* get equipped loadout
+* equip item
+* unequip item
+* get crafting recipes
+* craft item
+* upgrade item
+* roll item drop during run completion
+* include item value in owner drop-share calculation
+
+For MVP, inventory/crafting can be simple, but it must be persistent and server-side.
+
+---
+
+# UI additions for item-based gameplay
+
+Add these UI pieces:
+
+## Inventory panel
+
+Shows owned items by category and rarity.
+
+## Loadout panel
+
+Shows equipped weapon, armor, boots, relic, ability stones, and charm.
+
+## Item tooltip
+
+Shows:
+
+* name
+* rarity
+* category
+* stats
+* ability
+* source
+* value score
+
+## Crafting panel
+
+Shows available recipes, costs, and craft button.
+
+## Drop popup
+
+Shows currency/material/item drops after combat or run completion.
+
+## Labyrinth loot preview
+
+Shows possible item/material drops on Labyrinth cards and preview modal.
+
+---
+
+# Economy integration
+
+Item drops should have a `value_score`.
+
+Owner drop-share should include item value in a simplified way.
+
+For MVP:
+
+* currencies and materials can be shared directly as 20%
+* item drops can add a 20% value-equivalent owner reward
+* do not duplicate the exact item for the owner unless specifically designed later
+
+Example:
+
+Visitor drops a Rare Ember Bow with value score 100.
+
+Owner receives 20 drop-share value, represented as Gold/Dust equivalent or owner earnings value.
+
+Keep this simple and transparent.
+
+---
+
+# Scope control
+
+Do not let the item system become too large in the first build.
+
+MVP item system should include:
+
+* 10–20 item templates
+* basic inventory
+* basic equipment/loadout
+* weapon changes basic attack
+* ability stones change Q/E
+* relic or charm changes R/passive
+* simple crafting or item upgrade
+* item drops from completed runs
+* item value contributes to owner drop-share
+
+Do not build:
+
+* full marketplace
+* real NFT items
+* complex affix system
+* deep crafting tree
+* PvP
+* dozens of weapons
+* full ARPG inventory complexity
+
+The priority remains:
+
+1. persistence
+2. server-authoritative economy
+3. owner/visitor loop
+4. item-based top-down battler MVP
+5. free and paid runs
+6. owner drop-share
+7. paid entry split
+8. crafting/loadout foundation
+9. room/chamber data architecture
+
+The game should feel like:
+
+**Player-owned Labyrinth economy + active top-down combat runs + loot/crafting build freedom.**

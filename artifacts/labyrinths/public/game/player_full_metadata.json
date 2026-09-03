@@ -1,0 +1,61 @@
+{
+  "name": "Sunlit Adventurer — Full Composite Sheet",
+  "output_file": "player_full.png",
+  "dimensions": "832x1344",
+  "frame_size": 64,
+  "cols": 13,
+  "rows": 21,
+  "format": "LPC Classic (Universal-LPC)",
+  "direction_order": ["up", "left", "down", "right"],
+
+  "animation_rows": {
+    "spellcast": { "rows": "0–3", "frames_per_row": 7 },
+    "thrust":    { "rows": "4–7", "frames_per_row": 8 },
+    "walk":      { "rows": "8–11", "frames_per_row": 9 },
+    "slash":     { "rows": "12–15", "frames_per_row": 6 },
+    "shoot":     { "rows": "16–19", "frames_per_row": 13 },
+    "hurt":      { "rows": "20",   "frames_per_row": 6, "note": "down direction only" }
+  },
+
+  "head_layer_fix": "LPC body sheets (body/bodies/male/light.png) are HEADLESS by design. The head layer (head/heads/human/male/light.png) must be composited explicitly between body and eyes, or the character shows an empty dark face gap under the hair.",
+
+  "weapon_notes": {
+    "katana_sheet_format": "1664x512 (128px frames, 4 dirs x 13 cols)",
+    "walk_rows_8_to_11": "katana walk/ sheets used; 128px frames centered into 64px grid cells with -32px x/y offset",
+    "slash_rows_12_to_15": "katana slash/ sheets used; same 128px-to-64px centering logic",
+    "spellcast_thrust_shoot_hurt": "no katana overlay — weapon not present for these animation groups",
+    "runtime_overlay_contract": "An equipped weapon item overrides the baked default katana via spriteLayers keys composed at runtime by src/lib/sprite.ts. Bare keys (weapon_fg / weapon_behind) carry the WALK per-action sheet -> rows 8-11; the _slash variants (weapon_fg_slash / weapon_behind_slash) carry the SLASH per-action sheet -> rows 12-15. Oversize 1664-wide sheets reuse the same 128px-into-64px centering as the bake; standard 832-wide full sheets blit at the origin. Provide no spellcast/thrust/shoot/hurt weapon layers, so those animations gracefully omit the weapon."
+  },
+
+  "source_sheet_dimensions": {
+    "shadow":   "832x1344 (classic 21 rows)",
+    "cape":     "832x1344 (classic 21 rows)",
+    "torso":    "832x1344 (classic 21 rows)",
+    "shield":   "832x1344 (classic 21 rows)",
+    "hair":     "832x1344 (classic 21 rows)",
+    "body":     "832x2944 (expanded 46 rows — only first 21 rows used)",
+    "head":     "832x2944 (expanded 46 rows — only first 21 rows used)",
+    "eyes":     "832x2944 (expanded 46 rows — only first 21 rows used)",
+    "legs":     "832x2944 (expanded 46 rows — only first 21 rows used)",
+    "feet":     "832x2944 (expanded 46 rows — only first 21 rows used)",
+    "weapon_fg":     "1664x512 (128px walk-only — walk rows only)",
+    "weapon_behind": "1664x512 (128px walk+slash — walk/slash rows only)"
+  },
+
+  "layers_bottom_to_top": [
+    { "slot": "shadow",        "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/shadow/adult/shadow.png" },
+    { "slot": "weapon_behind", "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/weapon/sword/katana/walk/behind/katana.png",  "animation": "walk rows 8-11", "frame_px": 128 },
+    { "slot": "weapon_behind_slash", "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/weapon/sword/katana/slash/behind/katana.png", "animation": "slash rows 12-15", "frame_px": 128 },
+    { "slot": "cape",          "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/cape/solid/male/yellow.png" },
+    { "slot": "body",          "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/body/bodies/male/light.png" },
+    { "slot": "head",          "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/head/heads/human/male/light.png" },
+    { "slot": "eyes",          "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/eyes/human/adult/blue.png" },
+    { "slot": "hair",          "sourcePath": "hair_split/part1/high_ponytail/male/white.png" },
+    { "slot": "legs",          "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/legs/pantaloons/male/forest.png" },
+    { "slot": "feet",          "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/feet/boots2/male/brass.png" },
+    { "slot": "torso",         "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/torso/clothes/longsleeve/longsleeve/male/white.png" },
+    { "slot": "shield",        "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/shield/male/round_silver.png" },
+    { "slot": "weapon_fg",     "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/weapon/sword/katana/walk/katana.png",  "animation": "walk rows 8-11", "frame_px": 128 },
+    { "slot": "weapon_fg_slash", "sourcePath": "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/weapon/sword/katana/slash/katana.png", "animation": "slash rows 12-15", "frame_px": 128 }
+  ]
+}

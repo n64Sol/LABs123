@@ -1,0 +1,20 @@
+{
+  "description": "Approved-asset allowlist for the LPC sprite pipeline. The composer refuses to ingest any source path not covered here, so only vetted parts ever reach a shipped sprite. NOTE: this gates WHICH assets are composed; the per-asset license/attribution vetting (CC-BY / OGA-BY / CC0 vs ShareAlike) is tracked separately under the 'legally safe to ship' task and documented in README.md.",
+  "baseCharacterSources": [
+    "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/shadow/adult/shadow.png",
+    "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/weapon/sword/katana/",
+    "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/cape/solid/male/yellow.png",
+    "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/body/bodies/male/light.png",
+    "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/head/heads/human/male/light.png",
+    "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/eyes/human/adult/blue.png",
+    "hair_split/part1/high_ponytail/male/white.png",
+    "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/legs/pantaloons/male/forest.png",
+    "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/feet/boots2/male/brass.png",
+    "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/torso/clothes/longsleeve/longsleeve/male/white.png",
+    "universal-lpc/Universal-LPC-Spritesheet-Character-Generator-master/spritesheets/shield/male/round_silver.png"
+  ],
+  "equipmentAllowlist": {
+    "note": "The committed equipment overlays in public/game/lpc are the approved equipment set. Their canonical list lives in public/game/lpc/generated_manifest.json (every entry's 'file' is an approved overlay). The composer treats that manifest as the equipment allowlist in --verify mode.",
+    "manifest": "public/game/lpc/generated_manifest.json"
+  }
+}

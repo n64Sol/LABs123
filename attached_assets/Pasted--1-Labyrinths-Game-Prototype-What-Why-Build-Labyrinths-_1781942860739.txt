@@ -1,0 +1,95 @@
+#1 - Labyrinths Game Prototype
+What & Why
+Build Labyrinths — a polished, high-fantasy browser game prototype for a player-owned Labyrinth economy that is intended to grow into a real Solana game. This is NOT a client-only mock: it must be database-backed and server-authoritative from the start. The client requests actions; the server validates them and mutates persistent state. Wallet identity and $LAB balances are mocked for now (with a multi-user switcher) but the architecture is Solana-ready (clean wallet-identity model + documented on-chain placeholders) so real wallet/token integration is a later swap, not a rewrite.
+
+Core loop: connect a mock wallet → claim a Labyrinth → upgrade its Chambers → publish it to a shared overworld → other players discover and run it (free or paid) → owner earns 20% of visitor drop value on every non-owner run (free or paid) plus 80% of paid entry fees via an unlockable Toll Gate; the treasury takes 20% of paid entry fees. All of this persists across reloads.
+
+Economy rules (server-enforced)
+Every Labyrinth is free by default.
+Owners earn 20% of visitor drop value on every non-owner run (free or paid), generated as additional owner reward — the visitor's displayed rewards are never reduced.
+Owner self-runs generate no drop-share and charge no entry fee (owner still receives normal run loot; the run still completes and appears in history).
+Toll Gate is unlocked with mock $LAB; once unlocked the owner can set any entry fee.
+Paid entry (non-owner only): deduct full fee from visitor, credit 80% to owner pending earnings, 20% to treasury (immediately), write ledger + activity records, then start the run.
+Pending owner earnings: visitor rewards credit to the visitor immediately; owner earnings from both sources (20% drop-share, 80% paid-entry share) accrue to pending owner earnings first and only move to the owner's wallet balances when the owner clicks Collect Earnings. Treasury's 20% paid-entry share credits immediately.
+The client may never directly mutate balances, treasury, owner earnings, upgrades, or run rewards — every economy action goes through a validated, idempotent server action.
+Server-action safety (transactional + idempotent + validated)
+Database transactions: every action that mutates balances, pending earnings, treasury, upgrades, runs, ratings, or ledger records runs inside a single DB transaction — start free run, start paid run, complete run, buy upgrade, unlock Toll Gate, set entry fee, collect owner earnings, submit rating, seed/admin credits. If any part fails, the whole action rolls back (e.g. paid entry: deduct visitor $LAB + credit owner pending + credit treasury + write ledger + write activity + create run all commit together or not at all).
+Idempotency keys: start run, complete run, buy upgrade, unlock Toll Gate, collect earnings, and submit rating carry an idempotency key; a repeated request returns the existing completed result instead of re-applying the mutation. Double-clicks never double-charge, double-reward, double-upgrade, or double-submit.
+Completing an already-completed run must not grant rewards again.
+Unlocking an already-unlocked Toll Gate must not charge again.
+A failed upgrade validation must not deduct funds; purchases beyond an upgrade's max level are blocked.
+Insufficient $LAB blocks a paid run before any deduction/transaction is created.
+Owner self-runs charge no entry and generate no drop-share.
+All actions return user-friendly validation errors.
+Cancellation & failed-run policy (MVP)
+A paid run charges only when the server successfully validates balance and creates the run; if validation or run creation fails, nothing is charged.
+Once a paid run is successfully started, the entry fee is not refunded in MVP.
+Cancelled or failed runs generate no visitor loot and no owner drop-share.
+Only completed runs generate visitor rewards, owner drop-share, and ratings.
+Collect earnings (transactional)
+Collecting earnings runs in one transaction: calculate pending owner earnings → move pending soft currencies/$LAB into wallet balances → mark pending as collected (or write offsetting ledger records) → write owner_earnings_collected ledger entries → write an activity record → return updated balances + earnings summary. The same pending earnings can never be collected twice.
+
+Derived stats & capacity
+Key stats are derived/recalculated from persisted records, not trusted from static card values: today's runs, all-time runs, average rating, owner earnings today, treasury earnings, recent activity, trending score, best owner earnings, best free rewards. Seeded Labyrinths are normal DB records, not UI-only data.
+Labyrinths carry future-balancing fields — daily_run_capacity, daily_reward_capacity, runs_today, reward_value_today — generous/mostly informational for MVP but surfaced in owner/discovery UI where useful, so the architecture never assumes unlimited rewards.
+Run lifecycle
+Statuses: started, completed, cancelled, failed.
+
+Free non-owner run: server creates run started → player completes Chamber interactions → server computes visitor rewards + owner 20% drop-share → writes ledger + activity records → run completed.
+Paid non-owner run: server validates $LAB → deducts full fee → credits owner pending 80% + treasury 20% → writes ledger + activity → creates run started → player completes interactions → server computes visitor rewards + owner 20% drop-share → writes reward/drop-share ledger records → run completed.
+Owner self-run: no entry fee, no drop-share; owner gets normal run loot; run still completes and appears in history.
+Done looks like
+Persistence: all state survives reloads and is shared across players — wallet identities, balances, Labyrinth ownership/metadata, published state, upgrades, Toll Gate status, entry fees, runs, rewards, pending/collected owner earnings, treasury, ratings, activity log, economy ledger, and Chamber templates all live in the database.
+Multi-user mock wallets: a connect/switch modal lets us connect as different persisted mock users — at minimum Hammad (primary owner), AzukiKing (seeded owner), SporeLord (seeded owner), and Guest Adventurer (visitor) — so owner-vs-visitor behavior (non-owner runs, self-run exemptions, paid deductions, owner/treasury earnings, real visitor ratings) is fully testable.
+Landing page: real game front page — hero (title "Labyrinths", the "Own a Labyrinth…" subtitle, lore text), Connect Wallet / Enter Overworld / View Featured buttons, 5 feature cards, and 3–4 featured Labyrinth preview cards.
+Wallet/profile header (persistent): current player name, shortened wallet address, avatar placeholder, balances (Gold, Ore, Dust, Keys, $LAB), plus treasury and owner-earnings indicators.
+Overworld discovery: 8–12 seeded Labyrinths rendered from persisted DB records (not hardcoded cards), as glowing portal cards over a bright fantasy backdrop, with search and the full filter/sort set (Featured, Top Free, Top Paid, Best Loot, New, Boss Active, Rare Nodes, Highest Rated, Trending, Cheapest Paid, Most Runs, Best Owner Earnings, Best Free Rewards). Each card shows name, owner, free/paid + entry fee, rating, chambers, depth, biomes, rare nodes, boss status, today's runs, reward types, owner drop-share today, and Preview/Enter actions.
+Preview modal/page: full Labyrinth details and, for paid Labyrinths, a clear 80/20 payment breakdown plus the 20% owner drop-share note; entry disabled with "Insufficient $LAB balance" when the player can't afford it; owners can preview/run their own without paying.
+Owner dashboard: the 7 sections (Status, Entry Settings, Owner Earnings, Drop Share, Upgrades, Visitor Activity, Published Preview) and all owner actions (claim, rename, publish/unpublish, buy upgrades, unlock Toll Gate, set fee, collect earnings, preview/run own Labyrinth), all reading/writing persisted state.
+Owner earnings panel: shows pending drop-share earnings, pending paid-entry earnings, collected earnings, today earnings, and all-time earnings, with a working Collect Earnings action that moves pending into wallet balances.
+Upgrade/shop screen: upgrade categories (Chamber, Node, Chest, Monster, Merchant, Biome, Premium incl. Toll Gate); each card shows name, description, level, cost, currency, effect, locked/max-level state; buying calls a validated server action that checks funds + level cap, deducts currency, applies effects, and persists.
+Toll Gate system: unlock with $LAB, then a fee editor with an advisory suggested range (from a server-computed Appeal/Quality score), free/paid toggle, and a high-fee warning. High fees are warned but never blocked.
+Playable Chamber run: data-driven room layout (background, simple bounds, doors, spawns); player moves/navigates and interacts with a rare node, chest, and monster to collect loot, then exits. No complex physics, pathfinding, combat, or procedural generation. Rewards, owner drop-share, and (if paid) entry split are computed server-side.
+Run summary + rating: visitor rewards, owner drop-share generated, and (for paid runs) entry-fee split. Ratings are tied to completed runs only — owners cannot rate their own Labyrinth, one rating per completed run, rating persists and updates the Labyrinth's average. MVP is a single 1–5 star rating, with the data model allowing future categories (Fun, Loot, Difficulty, Visuals, Worth Entry Fee).
+Activity log (persisted, human-readable): wallet connected, Labyrinth claimed/published, upgrade purchased, Toll Gate unlocked, fee changed, visitor entered (free/paid), owner 80% entry share, treasury 20% share, visitor loot, owner 20% drop-share, run completed, rating submitted.
+Economy ledger (persisted, source of accounting truth): every balance or pending-earnings change writes a ledger record with id, type, user_id, labyrinth_id, optional run_id, currency, amount, direction (credit/debit), reason, metadata, created_at. Required types: paid_entry_debit, owner_entry_share_credit, treasury_entry_share_credit, visitor_reward_credit, owner_drop_share_credit, upgrade_purchase_debit, toll_gate_unlock_debit, owner_earnings_collected, admin_seed_credit. Financial truth comes from the ledger, not the activity log.
+"Wow" read endpoints (computed from persisted data): featured Labyrinths, top paid, top free, best owner earnings, best free rewards, trending, recent activity feed, leaderboard, owner earnings summary, treasury summary, recent paid entries, recent boss clears.
+Reusable polished components: wallet header + switcher, currency/treasury display, Labyrinth card, preview modal, upgrade card, Toll Gate card, fee editor, transaction modal, run-complete modal, reward popup, earnings panel, filters, leaderboard row, rating, chamber interaction panel, dashboard stat card — with hover/glow/pulse/modal animation in a bright, magical, collectible high-fantasy style (no grimdark/horror/generic dungeon).
+Chamber data model + VTT-readiness: an internal Chamber template format (id, name, biome, dimensions, walls, doors, lights, spawns, difficulty, loot tier, tags) stored in the DB with at least one seeded template, plus a documented placeholder utility describing the future VTT-style import pipeline.
+Solana-ready scaffolding: a clean wallet-identity model and documented placeholders for the future on-chain flow (real wallet connect, signature login, devnet $LAB, paid-entry transaction creation + signature verification, treasury/owner payout, signature storage) — no real Solana implemented.
+Architecture
+Frontend: a react-vite web app at the root path.
+Backend: the shared Express API server with Postgres + Drizzle for persistence, exposed through the OpenAPI-first contract and generated React Query hooks. All economy logic lives server-side and is idempotent.
+Data model (entities — exact shape may vary): users, player_balances, labyrinths, labyrinth_biomes, upgrades (catalog), labyrinth_upgrades, chamber_templates, labyrinth_chambers, runs, ratings, treasury, activity_log, economy_ledger, solana_transactions.
+API/server actions (server-authoritative, idempotent): connect mock wallet / switch user / get current player / get balances; claim / get owner / list published / rename / publish / unpublish / preview Labyrinth; list upgrade catalog / buy upgrade (validate + apply effects); unlock Toll Gate / set entry fee / suggested fee range; start free run / start paid run (80/20 split) / complete run (visitor rewards + owner 20% drop-share) / rate run; get treasury / owner earnings (pending + collected) / collect owner earnings / activity log / ledger; plus the "wow" read endpoints above.
+Out of scope
+Real mainnet blockchain payments, real SPL token launch, custom Solana program, real NFT/asset ownership, on-chain verification — Solana stays as documented placeholders + mock $LAB only.
+A full VTT importer (only the internal Chamber format + a documented pipeline placeholder).
+Final character/monster/room art, complex combat/physics/pathfinding, and procedural tilemap generation (explicitly excluded).
+Steps
+Define the API contract (OpenAPI-first) — Specify endpoints for all server actions (auth/player + user switching, Labyrinth CRUD + publish/preview, upgrades, Toll Gate, run lifecycle, economy/treasury/earnings/collect, ledger, activity) plus the "wow" read endpoints, then run codegen to produce typed hooks. This gates the frontend build.
+Launch the frontend build — Immediately after codegen, delegate the full UI to a design subagent: landing, wallet header + multi-user switcher, overworld discovery with search/filters, preview modal, owner dashboard, owner earnings panel (pending/collected/collect), upgrade/shop, Toll Gate + fee editor, chamber run screen, run summary + rating, activity log, and the reusable component set — bright high-fantasy style with the specified color language, polish, and animations, wired to the generated hooks.
+Build the persistence + economy backend (in parallel) — Provision Postgres, author the Drizzle schema for all entities (incl. economy_ledger and pending-earnings fields), implement the server-authoritative, idempotent route handlers and economy logic (run lifecycle, paid-entry 80/20 split, 20% non-owner drop-share, owner self-run exemptions, pending→collected earnings, ledger writes on every money movement, Appeal/Quality score + advisory suggested fee, treasury accounting, rating rules, activity logging), and seed mock data (the 4+ mock users, 8–12 Labyrinths as normal records, upgrade catalog, at least one Chamber template) via admin_seed ledger credits.
+Add Solana-ready scaffolding + VTT placeholder — Implement the mock wallet-identity model with documented placeholders for the future on-chain flow, and a documented Chamber-import utility describing the VTT-style pipeline (no real implementation).
+Wire and verify the loop end to end — Connect every screen to persisted server actions and run the full verification checklist below.
+Final verification checklist
+State persists after reload.
+Switching mock wallets works.
+Hammad can claim a Labyrinth.
+Hammad can upgrade and publish his Labyrinth.
+Guest Adventurer can enter Hammad's free Labyrinth.
+Guest Adventurer's completed free run generates visitor loot and Hammad's 20% pending drop-share.
+Hammad running his own Labyrinth generates normal loot but no owner drop-share.
+Hammad does not pay his own Toll Gate fee.
+Guest Adventurer entering a paid Labyrinth pays the full $LAB entry fee.
+Paid entry credits 80% to owner pending earnings and 20% to treasury.
+Paid run completion also generates owner 20% drop-share.
+Completing the same run twice does not grant rewards twice.
+Buying the same upgrade twice respects level caps and funds.
+Unlocking Toll Gate twice does not charge twice.
+Ratings require completed non-owner runs.
+Activity log persists.
+Economy ledger persists and matches balance changes.
+Owner can collect pending earnings once, and balances update correctly.
+Suggested entry fee is advisory only; high fees warn but are not blocked.
+Chamber data model exists and is ready for future VTT-style room imports.

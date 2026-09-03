@@ -1,0 +1,268 @@
+Update the Labyrinths plan with the following requirements before building.
+
+## 1. Add mock multi-user support
+
+The prototype must support switching between multiple persisted mock wallets so we can test owner/visitor behavior.
+
+Create at least these mock users:
+
+* Hammad: primary player/owner
+* AzukiKing: seeded Labyrinth owner
+* SporeLord: seeded Labyrinth owner
+* Guest Adventurer: visitor account
+
+Add a simple mock wallet switcher or connect modal that lets us connect as different mock wallets.
+
+This is required to test:
+
+* non-owner visitor runs
+* owner self-run exemptions
+* paid entry fee deductions
+* owner earnings
+* treasury earnings
+* ratings from real visitors
+
+Owner self-runs must not charge entry and must not generate owner drop-share.
+
+## 2. Define pending owner earnings
+
+Owner earnings should be tracked as pending earnings until collected.
+
+Visitor rewards are credited immediately to the visitor balance.
+
+Owner earnings from both sources should go to pending owner earnings first:
+
+1. 20% drop-share from non-owner visitor drops
+2. 80% paid-entry share from non-owner paid runs
+
+The owner can click **Collect Earnings** to move pending earnings into their wallet balances.
+
+Treasury earnings from the 20% paid-entry treasury share should be credited immediately to treasury.
+
+The Owner Earnings panel should show:
+
+* pending drop-share earnings
+* pending paid-entry earnings
+* collected earnings
+* today earnings
+* all-time earnings
+
+## 3. Add a real economy ledger
+
+Add a persistent `economy_ledger` or equivalent table. Do not rely only on `activity_log` for financial truth.
+
+Every balance or pending-earnings change should create a ledger record.
+
+Ledger entries should include:
+
+* id
+* type
+* user_id
+* labyrinth_id
+* run_id, if applicable
+* currency
+* amount
+* direction: credit or debit
+* reason
+* metadata_json
+* created_at
+
+Required ledger types:
+
+* paid_entry_debit
+* owner_entry_share_credit
+* treasury_entry_share_credit
+* visitor_reward_credit
+* owner_drop_share_credit
+* upgrade_purchase_debit
+* toll_gate_unlock_debit
+* owner_earnings_collected
+* admin_seed_credit
+
+The visible activity log should be human-readable. The economy ledger should be the source of accounting truth.
+
+## 4. Make server actions idempotent and validated
+
+All economy actions must be server-authoritative and safe against double clicks.
+
+Rules:
+
+* If a run is already completed, completing it again must not give rewards again.
+* If Toll Gate is already unlocked, unlocking it again must not charge again.
+* If an upgrade purchase fails validation, do not deduct funds.
+* If an upgrade has max level, block purchases beyond max level.
+* If a visitor lacks enough $LAB for paid entry, block the run before creating the paid transaction.
+* If the user is the Labyrinth owner, do not charge entry and do not generate owner drop-share.
+
+Use clear server-side validation and return user-friendly error messages.
+
+## 5. Define run lifecycle
+
+Runs should have statuses:
+
+* started
+* completed
+* cancelled
+* failed
+
+Flow for a free non-owner run:
+
+1. server creates run with status `started`
+2. player completes Chamber interactions
+3. server completes run
+4. server calculates visitor rewards
+5. server calculates owner 20% drop-share
+6. server writes ledger records
+7. server writes activity records
+8. run becomes `completed`
+
+Flow for a paid non-owner run:
+
+1. server validates visitor has enough $LAB
+2. server deducts full entry fee
+3. server credits owner pending paid-entry share: 80%
+4. server credits treasury: 20%
+5. server writes ledger and activity records
+6. server creates run with status `started`
+7. player completes Chamber interactions
+8. server calculates visitor rewards
+9. server calculates owner 20% drop-share
+10. server writes reward/drop-share ledger records
+11. run becomes `completed`
+
+Flow for owner self-run:
+
+1. no entry fee is charged
+2. no owner drop-share is generated
+3. owner receives normal run loot only
+4. run can still complete and appear in history
+
+## 6. Rating rules
+
+Ratings must be tied to completed runs.
+
+Rules:
+
+* only completed runs can be rated
+* owners cannot rate their own Labyrinth
+* one rating per completed run
+* rating persists
+* average Labyrinth rating updates after rating submission
+
+For MVP, one 1–5 star rating is enough, but the data model should allow future categories:
+
+* Fun
+* Loot
+* Difficulty
+* Visuals
+* Worth Entry Fee
+
+## 7. Suggested entry fee is advisory only
+
+The server should compute an Appeal/Quality score and suggested entry fee range.
+
+Suggested fee should consider:
+
+* Labyrinth level
+* Chamber count
+* depth
+* rating
+* rare node count
+* boss active
+* chest quality
+* recent runs
+* paid conversion
+* reward potential
+
+But owners can set any entry fee after Toll Gate is unlocked.
+
+If fee is much higher than the suggested range, show a warning:
+
+“High entry fees may reduce visitor traffic unless your Labyrinth has strong ratings, rare nodes, or active bosses.”
+
+Do not block high fees.
+
+## 8. Keep high-fantasy visual direction
+
+Use high fantasy as the main aesthetic.
+
+The product should feel:
+
+* magical
+* colorful
+* bright
+* collectible
+* social
+* polished
+* portal-based
+* adventurous
+
+Avoid making the game grimdark, horror, or generic dungeon-themed.
+
+The overworld should feel like a magical portal network with glowing Labyrinth entrances, not a dark dungeon browser.
+
+## 9. Chamber gameplay scope
+
+Keep the Chamber run simple and reliable.
+
+The purpose is to prove:
+
+* Chamber data model
+* movement or simple navigation
+* rare node interaction
+* chest interaction
+* monster interaction
+* exit/completion flow
+* visitor rewards
+* owner 20% drop-share
+* paid entry 80/20 split
+* run summary
+
+Do not over-engineer physics, pathfinding, combat, or procedural generation.
+
+Use simple placeholder room data and simple collision/bounds for now.
+
+## 10. Persisted seeded data
+
+Seed 8–12 Labyrinths, but make sure all overworld cards, stats, ratings, runs, and earnings read from the persisted database after seeding.
+
+Do not keep the Overworld as hardcoded static cards once the database exists.
+
+Seeded Labyrinths should be normal database records that can receive runs, ratings, earnings, and updated stats.
+
+## 11. Add “wow” read endpoints
+
+Add read endpoints that make the product feel alive:
+
+* overworld featured Labyrinths
+* top paid Labyrinths
+* top free Labyrinths
+* best owner earnings
+* best free rewards
+* trending Labyrinths
+* recent activity feed
+* leaderboard
+* owner earnings summary
+* treasury summary
+* recent paid entries
+* recent boss clears
+
+These can be computed from persisted mock data.
+
+## 12. Completion criteria update
+
+The prototype is not complete unless these are true:
+
+* state persists across reloads
+* mock wallet can switch users
+* owner self-run does not pay entry
+* owner self-run does not generate drop-share
+* non-owner free run generates owner 20% drop-share
+* non-owner paid run charges entry and splits 80/20
+* non-owner paid run also generates owner 20% drop-share on completion
+* activity log persists
+* economy ledger persists
+* ratings require completed run
+* owner earnings can be collected
+* treasury updates correctly
+* all important economy mutations happen through server actions

@@ -1,0 +1,901 @@
+uploads = []
+
+[[generated]]
+id = "LLluE5ri38VuoCoaaUhTI"
+uri = "file://artifacts/labyrinths/public/game/player.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "ikTwBH7edyMIkLlYsv_G6"
+uri = "file://artifacts/labyrinths/public/game/enemy_grunt.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "9ZgbRVZkkNEft4wf9e9bj"
+uri = "file://artifacts/labyrinths/public/game/enemy_ranged.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "rbclueEl4j6TGEggkBZPY"
+uri = "file://artifacts/labyrinths/public/game/enemy_elite.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "LQ_KTHwgEESCLYvnDjlVZ"
+uri = "file://artifacts/labyrinths/public/game/enemy_boss.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "-wwMtJS-J4HRVl1WwzcLV"
+uri = "file://artifacts/labyrinths/public/game/chest.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "K6AtgRkzUZIGdf0rKDlbC"
+uri = "file://artifacts/labyrinths/public/game/floor_sunlit_ruins.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "i9RsAaqKO8DOBG0ObEfsn"
+uri = "file://artifacts/labyrinths/public/game/node.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "lnvYZZsLJvhwK4nS3Hh5O"
+uri = "file://artifacts/labyrinths/public/game/rock.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "3x_0h3llVhqb1HJke-DVa"
+uri = "file://artifacts/labyrinths/public/game/floor_emberforge.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "r93EPjZyjNrZ0cq4fdt6H"
+uri = "file://artifacts/labyrinths/public/game/floor_crystal_caverns.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "uYssLUoUVc-8i-V5KQc8B"
+uri = "file://artifacts/labyrinths/public/game/floor_astral_spire.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "kBez-acobCnZ0TI3Al5P-"
+uri = "file://artifacts/labyrinths/public/game/floor_tidecaller.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "DRraKl9lTB7e0ZU-nb3Fd"
+uri = "file://artifacts/labyrinths/public/game/player_sheet.png"
+type = "image"
+title = "player sprite sheet"
+
+[[generated]]
+id = "-dUCEhajqbtcwhdi7c5Z2"
+uri = "file://artifacts/mockup-sandbox/src/assets/artdirections/obsidian_battle.png"
+type = "image"
+title = "Obsidian Forge Battle"
+
+[[generated]]
+id = "wFNx4qf0So9D81gWEpbfc"
+uri = "file://artifacts/mockup-sandbox/src/assets/artdirections/obsidian_overworld.png"
+type = "image"
+title = "Obsidian Forge Overworld"
+
+[[generated]]
+id = "S1RXV31nBNNTxbrlVL8ul"
+uri = "file://artifacts/mockup-sandbox/src/assets/artdirections/arcane_battle.png"
+type = "image"
+title = "Arcane Circuit Battle"
+
+[[generated]]
+id = "cnpETlX3vy1iidShJCvWH"
+uri = "file://artifacts/mockup-sandbox/src/assets/artdirections/arcane_overworld.png"
+type = "image"
+title = "Arcane Circuit Overworld"
+
+[[generated]]
+id = "6Ki3Z9xPt8fB-NwJx0cQS"
+uri = "file://artifacts/mockup-sandbox/src/assets/artdirections/gilded_battle.png"
+type = "image"
+title = "Gilded Myth Battle"
+
+[[generated]]
+id = "BLEqzJON7ycKKOjPGeVJh"
+uri = "file://artifacts/mockup-sandbox/src/assets/artdirections/gilded_overworld.png"
+type = "image"
+title = "Gilded Myth Overworld"
+
+[[generated]]
+id = "WcIZYU0_APYbBJCahNr5O"
+uri = "file://artifacts/mockup-sandbox/src/assets/artdirections/stormveil_battle.png"
+type = "image"
+title = "Stormveil Battle"
+
+[[generated]]
+id = "MQom6v-avMUwv2yQVEXr_"
+uri = "file://artifacts/mockup-sandbox/src/assets/artdirections/stormveil_overworld.png"
+type = "image"
+title = "Stormveil Overworld"
+
+[[generated]]
+id = "v2CCGZT-WuYoJ7QeWI5dj"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/obsidian/floor.png"
+type = "image"
+title = "obsidian floor tile"
+
+[[generated]]
+id = "AtRYeutKSjB6DznQ8FF8M"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/obsidian/wall.png"
+type = "image"
+title = "obsidian wall tile"
+
+[[generated]]
+id = "a-2yQ3-JUvMzS-mUZNDNi"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/obsidian/ground.png"
+type = "image"
+title = "obsidian ground tile"
+
+[[generated]]
+id = "Nm7kJeCQmeOnF9y6a1zLu"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/obsidian/hero.png"
+type = "image"
+title = "obsidian hero sprite"
+
+[[generated]]
+id = "3UlMlF-Gc7dMNnokOZni3"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/obsidian/grunt.png"
+type = "image"
+title = "obsidian grunt sprite"
+
+[[generated]]
+id = "fn_m1-cUPpEQqiZLDMZtk"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/obsidian/caster.png"
+type = "image"
+title = "obsidian caster sprite"
+
+[[generated]]
+id = "LCP5HVQN2MhugjpnETH3k"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/obsidian/boss.png"
+type = "image"
+title = "obsidian boss sprite"
+
+[[generated]]
+id = "wct4Ip7pC_o9gXLZ1pzJD"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/obsidian/portal.png"
+type = "image"
+title = "obsidian portal sprite"
+
+[[generated]]
+id = "orbFqRjc8iiwA-IqCSklA"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/obsidian/prop.png"
+type = "image"
+title = "obsidian prop sprite"
+
+[[generated]]
+id = "RZKI_9tZCVXmJwLugzsVX"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/obsidian/loot.png"
+type = "image"
+title = "obsidian loot sprite"
+
+[[generated]]
+id = "TnUw_M-GS0qjsg_OxjrTY"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/arcane/floor.png"
+type = "image"
+title = "arcane floor tile"
+
+[[generated]]
+id = "lB1kJw2wofN3iDxJqIuHC"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/arcane/wall.png"
+type = "image"
+title = "arcane wall tile"
+
+[[generated]]
+id = "uco5Q1PntY988-SK9trvN"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/arcane/ground.png"
+type = "image"
+title = "arcane ground tile"
+
+[[generated]]
+id = "ZsKzQwIEGujELJqIvm69a"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/arcane/hero.png"
+type = "image"
+title = "arcane hero sprite"
+
+[[generated]]
+id = "VenFCd1u4hMS3ZhW2nHEE"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/arcane/grunt.png"
+type = "image"
+title = "arcane grunt sprite"
+
+[[generated]]
+id = "Zk2oDkb2O9d1Ly3ZPziYB"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/arcane/caster.png"
+type = "image"
+title = "arcane caster sprite"
+
+[[generated]]
+id = "lbZSVz9f4nr2wUsGOkbSY"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/arcane/boss.png"
+type = "image"
+title = "arcane boss sprite"
+
+[[generated]]
+id = "pejz0EtQNpSEhRuRok3Nv"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/arcane/portal.png"
+type = "image"
+title = "arcane portal sprite"
+
+[[generated]]
+id = "DytLFlLQzUTxyylRLjZf3"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/arcane/prop.png"
+type = "image"
+title = "arcane prop sprite"
+
+[[generated]]
+id = "G8BQ4QFrkj3zOB0ROHrMB"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/arcane/loot.png"
+type = "image"
+title = "arcane loot sprite"
+
+[[generated]]
+id = "a7NTvsFDQIaA2cxc3ONwr"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/stormveil/floor.png"
+type = "image"
+title = "stormveil floor tile"
+
+[[generated]]
+id = "4KgyQkmjVGg6LiVVs-FLx"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/stormveil/wall.png"
+type = "image"
+title = "stormveil wall tile"
+
+[[generated]]
+id = "gYu6GI_uYwqCgMpCXmOit"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/stormveil/ground.png"
+type = "image"
+title = "stormveil ground tile"
+
+[[generated]]
+id = "-So_5RlokXqkxQcdsh347"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/stormveil/hero.png"
+type = "image"
+title = "stormveil hero sprite"
+
+[[generated]]
+id = "1INUGR7MIgbirNxSnFjFE"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/stormveil/grunt.png"
+type = "image"
+title = "stormveil grunt sprite"
+
+[[generated]]
+id = "WEPQXMXwlALYcERyYo9TP"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/stormveil/caster.png"
+type = "image"
+title = "stormveil caster sprite"
+
+[[generated]]
+id = "aRHfVG9vlNZR5-vTFq8Pb"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/stormveil/boss.png"
+type = "image"
+title = "stormveil boss sprite"
+
+[[generated]]
+id = "mKjwZMgrkbNhO8qUoF6-8"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/stormveil/portal.png"
+type = "image"
+title = "stormveil portal sprite"
+
+[[generated]]
+id = "csJp_N6l25Wn47GOTxl7-"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/stormveil/prop.png"
+type = "image"
+title = "stormveil prop sprite"
+
+[[generated]]
+id = "EwTzxFwwwbIECbFcmggUY"
+uri = "file://artifacts/mockup-sandbox/src/assets/inengine/stormveil/loot.png"
+type = "image"
+title = "stormveil loot sprite"
+
+[[generated]]
+id = "OvtGNgzHU4QRpUVPEyJzO"
+uri = "file://attached_assets/generated_images/labyrinths_verdant.png"
+type = "image"
+title = "verdant pixel overworld"
+
+[[generated]]
+id = "dkffqH7ZnPNJyyAd7iznD"
+uri = "file://attached_assets/generated_images/labyrinths_village.png"
+type = "image"
+title = "village pixel overworld"
+
+[[generated]]
+id = "RYqAWnIHDANJYfzeDEE1G"
+uri = "file://attached_assets/generated_images/labyrinths_dark.png"
+type = "image"
+title = "dark fantasy pixel overworld"
+
+[[generated]]
+id = "QHQIJaGsRaWna7QpYhin_"
+uri = "file://attached_assets/generated_images/overworld_16bit_map.png"
+type = "image"
+title = "16bit overworld biome map"
+
+[[generated]]
+id = "byiZVXY2BG_c6j9ElHTFx"
+uri = "file://attached_assets/generated_images/overworld_16bit_gameplay.png"
+type = "image"
+title = "16bit gameplay biomes"
+
+[[generated]]
+id = "qn-hhEI6OT_dVKiAuLs8M"
+uri = "file://artifacts/labyrinths/public/game/overworld16/g_verdant_grove.png"
+type = "image"
+title = "g_verdant_grove"
+
+[[generated]]
+id = "2nz4s0EgcAM0y1WoQ5Zic"
+uri = "file://artifacts/labyrinths/public/game/overworld16/g_sunlit_ruins.png"
+type = "image"
+title = "g_sunlit_ruins"
+
+[[generated]]
+id = "dFSjzev7uQGpsgf4ZLLrz"
+uri = "file://artifacts/labyrinths/public/game/overworld16/g_tidecaller.png"
+type = "image"
+title = "g_tidecaller"
+
+[[generated]]
+id = "1tLWCpRvwQagNsVmK7Ex_"
+uri = "file://artifacts/labyrinths/public/game/overworld16/g_crystal_caverns.png"
+type = "image"
+title = "g_crystal_caverns"
+
+[[generated]]
+id = "RSwxI84AqjD0-jTwv2H0Z"
+uri = "file://artifacts/labyrinths/public/game/overworld16/g_emberforge.png"
+type = "image"
+title = "g_emberforge"
+
+[[generated]]
+id = "Uy0PmXRWvA4OpEuBAdGoJ"
+uri = "file://artifacts/labyrinths/public/game/overworld16/g_astral_spire.png"
+type = "image"
+title = "g_astral_spire"
+
+[[generated]]
+id = "jcd57UFwXjYohhpDWyZJB"
+uri = "file://artifacts/labyrinths/public/game/overworld16/g_road.png"
+type = "image"
+title = "g_road"
+
+[[generated]]
+id = "3lR1byXte9bpmSN-06Vmv"
+uri = "file://artifacts/labyrinths/public/game/overworld16/g_hub.png"
+type = "image"
+title = "g_hub"
+
+[[generated]]
+id = "geFisytfj7Z9tjtBE7zWf"
+uri = "file://artifacts/labyrinths/public/game/overworld16/o_tree.png"
+type = "image"
+title = "o_tree"
+
+[[generated]]
+id = "9_PqFoS5VVxsMrdeO2S5J"
+uri = "file://artifacts/labyrinths/public/game/overworld16/o_bush.png"
+type = "image"
+title = "o_bush"
+
+[[generated]]
+id = "tEpexG_ic8oYrHZcBIfXU"
+uri = "file://artifacts/labyrinths/public/game/overworld16/o_rock.png"
+type = "image"
+title = "o_rock"
+
+[[generated]]
+id = "76CKIK0fnpGfZwFAqfCrq"
+uri = "file://artifacts/labyrinths/public/game/overworld16/o_cactus.png"
+type = "image"
+title = "o_cactus"
+
+[[generated]]
+id = "N9bOecbaepzEI6QRA_tt9"
+uri = "file://artifacts/labyrinths/public/game/overworld16/o_ruin_pillar.png"
+type = "image"
+title = "o_ruin_pillar"
+
+[[generated]]
+id = "LWjMRV93IbIxOftd3av5m"
+uri = "file://artifacts/labyrinths/public/game/overworld16/o_crystal.png"
+type = "image"
+title = "o_crystal"
+
+[[generated]]
+id = "d8f6ophktdO69D4zokA6M"
+uri = "file://artifacts/labyrinths/public/game/overworld16/o_lava_rock.png"
+type = "image"
+title = "o_lava_rock"
+
+[[generated]]
+id = "CfufgFEwsaQ1kzQ4Rvcoe"
+uri = "file://artifacts/labyrinths/public/game/overworld16/o_rune_stone.png"
+type = "image"
+title = "o_rune_stone"
+
+[[generated]]
+id = "cku6BG4EIsENGRBNrEfTV"
+uri = "file://artifacts/labyrinths/public/game/overworld16/o_reed.png"
+type = "image"
+title = "o_reed"
+
+[[generated]]
+id = "0kKwqbPeiEg0rpKN2rTu5"
+uri = "file://artifacts/labyrinths/public/game/overworld16/t_inn.png"
+type = "image"
+title = "t_inn"
+
+[[generated]]
+id = "k8ulkKxafWfAQxooM8S-o"
+uri = "file://artifacts/labyrinths/public/game/overworld16/t_shop.png"
+type = "image"
+title = "t_shop"
+
+[[generated]]
+id = "OfaGhgSbWiFy5Ww8ubQHu"
+uri = "file://artifacts/labyrinths/public/game/overworld16/t_forge.png"
+type = "image"
+title = "t_forge"
+
+[[generated]]
+id = "DGJ0sTeLILaAnb0FNerDM"
+uri = "file://artifacts/labyrinths/public/game/overworld16/t_armory.png"
+type = "image"
+title = "t_armory"
+
+[[generated]]
+id = "yfFUYdtj8sp6oFR0cGSYF"
+uri = "file://artifacts/labyrinths/public/game/overworld16/t_library.png"
+type = "image"
+title = "t_library"
+
+[[generated]]
+id = "R5gUDEOSxjWkLf8PgwkAw"
+uri = "file://artifacts/labyrinths/public/game/overworld16/t_bank.png"
+type = "image"
+title = "t_bank"
+
+[[generated]]
+id = "GCyHmAVaAMpJh5Zik3bXB"
+uri = "file://artifacts/labyrinths/public/game/overworld16/t_fountain.png"
+type = "image"
+title = "t_fountain"
+
+[[generated]]
+id = "vZzLaGupTBPyLMrFNP4kZ"
+uri = "file://artifacts/labyrinths/public/game/overworld16/t_lamp.png"
+type = "image"
+title = "t_lamp"
+
+[[generated]]
+id = "7uvcoxWBeIJ2Zjh-bNzXR"
+uri = "file://artifacts/labyrinths/public/game/overworld16/g_plaza.png"
+type = "image"
+title = "g_plaza"
+
+[[generated]]
+id = "J_L6Tz303mVdMLNmZjBpa"
+uri = "file://artifacts/labyrinths/public/game/overworld16/g_path.png"
+type = "image"
+title = "g_path"
+
+[[generated]]
+id = "-x76JV6OC_mD9Q28aR1zf"
+uri = "file://artifacts/labyrinths/public/game/overworld16/i_floor_wood.png"
+type = "image"
+title = "i_floor_wood"
+
+[[generated]]
+id = "yO8swo0LTaeNUniWQFsu6"
+uri = "file://artifacts/labyrinths/public/game/overworld16/i_floor_stone.png"
+type = "image"
+title = "i_floor_stone"
+
+[[generated]]
+id = "928tA9trZULC0WMo-WSgp"
+uri = "file://artifacts/labyrinths/public/game/overworld16/i_wall.png"
+type = "image"
+title = "i_wall"
+
+[[generated]]
+id = "u2bPYtzBSi7rTltS8N7EZ"
+uri = "file://artifacts/labyrinths/public/game/overworld16/i_counter.png"
+type = "image"
+title = "i_counter"
+
+[[generated]]
+id = "T-F5yV52pmsRQciOhYfDQ"
+uri = "file://artifacts/labyrinths/public/game/overworld16/i_shelf.png"
+type = "image"
+title = "i_shelf"
+
+[[generated]]
+id = "SuT4lCfCX4eNcHEZSV3ET"
+uri = "file://artifacts/labyrinths/public/game/overworld16/i_anvil.png"
+type = "image"
+title = "i_anvil"
+
+[[generated]]
+id = "yXnSF-Jn3zyUJhbcRjRfi"
+uri = "file://artifacts/labyrinths/public/game/overworld16/i_bookshelf.png"
+type = "image"
+title = "i_bookshelf"
+
+[[generated]]
+id = "b8XvypMbBaq4Lf8eWMtsA"
+uri = "file://artifacts/labyrinths/public/game/overworld16/i_bed.png"
+type = "image"
+title = "i_bed"
+
+[[generated]]
+id = "hdBFZDasEkbAUrlrExx3K"
+uri = "file://artifacts/labyrinths/public/game/overworld16/i_vault.png"
+type = "image"
+title = "i_vault"
+
+[[generated]]
+id = "EhcVkpRpODsMMg7hdpAKx"
+uri = "file://artifacts/labyrinths/public/game/overworld16/i_hearth.png"
+type = "image"
+title = "i_hearth"
+
+[[generated]]
+id = "PThQunTF4zKI-y-YC6Qut"
+uri = "file://artifacts/labyrinths/public/game/overworld16/n_merchant.png"
+type = "image"
+title = "n_merchant"
+
+[[generated]]
+id = "sg0cpPlyv5I43S97BBF5-"
+uri = "file://artifacts/labyrinths/public/game/overworld16/n_smith.png"
+type = "image"
+title = "n_smith"
+
+[[generated]]
+id = "q6Q-Cr4mYKRpPyt_u4irs"
+uri = "file://artifacts/labyrinths/public/game/overworld16/n_armorer.png"
+type = "image"
+title = "n_armorer"
+
+[[generated]]
+id = "ebtlGyFzhOWPeHSiHfcL8"
+uri = "file://artifacts/labyrinths/public/game/overworld16/n_scholar.png"
+type = "image"
+title = "n_scholar"
+
+[[generated]]
+id = "JtJVpO4zNUgca6m4GVuD8"
+uri = "file://artifacts/labyrinths/public/game/overworld16/n_banker.png"
+type = "image"
+title = "n_banker"
+
+[[generated]]
+id = "grY_eU-KLAbx5R2Xa3P13"
+uri = "file://artifacts/labyrinths/public/game/overworld16/n_innkeeper.png"
+type = "image"
+title = "n_innkeeper"
+
+[[generated]]
+id = "cHPP9voLlXMmckgWef-yJ"
+uri = "file://artifacts/labyrinths/public/game/overworld16/t_library_r.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "TXWgnDoJn6dM7ddAfiznl"
+uri = "file://artifacts/labyrinths/public/game/overworld16/t_armory_r.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "PNYbXMPiW0dH7LfHoeq7Z"
+uri = "file://artifacts/labyrinths/public/game/overworld16/t_inn_r.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "wq2PmkA_xDUsmuM5bEADl"
+uri = "file://attached_assets/generated_images/vg_ground.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "xrEeoSteswq54yBM-nlSG"
+uri = "file://attached_assets/generated_images/vg_tree.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "XSIBhtXtogFUIcioQTUaf"
+uri = "file://attached_assets/generated_images/vg_bush.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Nw1amgpb_dtL-_Hu6_YRy"
+uri = "file://attached_assets/generated_images/vg_rock.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "EMg8x3cxc0XA2DKIFSbDc"
+uri = "file://attached_assets/generated_images/vg_flowers.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "qS1PSNGrVe1LOtd2KjMzz"
+uri = "file://attached_assets/generated_images/vg_fern.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "ME21E-NH1Gz18BrZ6AaOK"
+uri = "file://attached_assets/generated_images/vg_elder.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "1h6Rhg7tcL9wfdJHI9JfI"
+uri = "file://attached_assets/generated_images/lm_sunlit_temple.png"
+type = "image"
+title = "sunlit temple landmark"
+
+[[generated]]
+id = "hl6QuQtAL-cYn-BMgLBzM"
+uri = "file://attached_assets/generated_images/lm_lighthouse.png"
+type = "image"
+title = "lighthouse landmark"
+
+[[generated]]
+id = "okzqNzL_AJfzX_FiI0bO9"
+uri = "file://attached_assets/generated_images/lm_crystal_spire.png"
+type = "image"
+title = "crystal spire landmark"
+
+[[generated]]
+id = "lJygA7ZmqwX-vUfn02pRL"
+uri = "file://attached_assets/generated_images/lm_ember_spire.png"
+type = "image"
+title = "ember spire landmark"
+
+[[generated]]
+id = "zvPMWTxGd-RB-8x4vZNIj"
+uri = "file://attached_assets/generated_images/lm_astral_obelisk.png"
+type = "image"
+title = "astral obelisk landmark"
+
+[[outputs]]
+id = "G-RFb8eQjBdj6LKRhTsrw"
+uri = "file://lpc_analysis_bundle.zip"
+type = "unspecified"
+title = "LPC analysis bundle (updated)"
+
+[[outputs]]
+id = "tq8gM1Mwh33ZE_5IJI9TW"
+uri = "file://sunlit_adventurer_preview.png"
+type = "image"
+title = "Sunlit Adventurer — fixed (head layer added)"
+
+[[outputs]]
+id = "U2oVr1daJ16lQflNRKXt9"
+uri = "file://modularity_demo.png"
+type = "image"
+title = "Modularity demo — fixed"
+
+[[outputs]]
+id = "nGOLFgAXToA3yn2QWxJpN"
+uri = "file://artifacts/labyrinths/tools/sprite-pipeline/out/full_sword_basic.png"
+type = "image"
+title = "Sword — all 4 facings (walk rows 1-4) + slash (rows 5-8), composited on the character"
+
+[[outputs]]
+id = "58EsXTJb-4sqe31l2YCJU"
+uri = "file://artifacts/labyrinths/tools/sprite-pipeline/out/full_glaive_moon.png"
+type = "image"
+title = "Glaive — all 4 facings + slash"
+
+[[outputs]]
+id = "tLq1ijHajcJ4PC0C6X2Va"
+uri = "file://exports/labyrinths-style-comparison.jpg"
+type = "image"
+title = "Labyrinths — Art Direction (4 looks, incl. your Czepeku map)"
+
+[[outputs]]
+id = "905PRYg6OWd1Snlfhz2tq"
+uri = "file://screenshots/art_directions_full.jpg"
+type = "image"
+title = "Labyrinths — 4 Premium Art Directions"
+
+[[outputs]]
+id = "D7czgEyAFDV9VMOjPO4Lb"
+uri = "file://screenshots/inengine_full.jpg"
+type = "image"
+title = "Labyrinths — In-Engine Composed Directions (tiles + sprites + lighting)"
+
+[[outputs]]
+id = "gZyRcG-Zdo4KNh7nQcUm3"
+uri = "file://screenshots/inengine_distinct.jpg"
+type = "image"
+title = "Labyrinths — Three Distinct Game Directions (ARPG / MOBA / Soulslike)"
+
+[[outputs]]
+id = "Gui-N40bGOSOBnA6NeOAT"
+uri = "file://screenshots/map_ink.jpg"
+type = "image"
+title = "Style 1 — Inkbound Cartography (parchment + ink, all code)"
+
+[[outputs]]
+id = "ZUv0-5ILO_DOc_qu_012E"
+uri = "file://screenshots/map_holo.jpg"
+type = "image"
+title = "Style 2 — Arcane Holotable (holographic projection, all code)"
+
+[[outputs]]
+id = "_MQh-glfi5U2qTfeMt0bO"
+uri = "file://screenshots/map_stained.jpg"
+type = "image"
+title = "Style 3 — Stained Realm (leaded stained-glass, all code)"
+
+[[outputs]]
+id = "wnSDGh7o7G2ZGg05sHoo5"
+uri = "file://screenshots/map_paint.jpg"
+type = "image"
+title = "Direction 1 — Painterly Realms (textured biome floors + hero, all code)"
+
+[[outputs]]
+id = "HtixzgxMCq_0KH-syJpBG"
+uri = "file://screenshots/map_holo2.jpg"
+type = "image"
+title = "Direction 2 — Arcane Holotable (neon wire terrain, all code)"
+
+[[outputs]]
+id = "8u228RJh0AnioBxweAgn5"
+uri = "file://screenshots/map_ink2.jpg"
+type = "image"
+title = "Direction 3 — Inked Codex (vellum + ink wash, all code)"
+
+[[outputs]]
+id = "A_hnLbn44MiuMCrncWhrn"
+uri = "file://screenshots/px_dawn.jpg"
+type = "image"
+title = "Verdant Dawn — bright pixel-art overworld (all code, no assets)"
+
+[[outputs]]
+id = "tmPa3uar20XsV_lz9v8LP"
+uri = "file://screenshots/px_dusk.jpg"
+type = "image"
+title = "Emberfall Dusk — golden-hour grade + drifting embers"
+
+[[outputs]]
+id = "Q0VCbF1TyPl4Na1SBJNDd"
+uri = "file://screenshots/px_night.jpg"
+type = "image"
+title = "Moonlit Hollow — night, glowing windows + fireflies"
+
+[[outputs]]
+id = "ToUOSRsCYWLQW8LpUcW3J"
+uri = "file://attached_assets/generated_images/labyrinths_verdant.png"
+type = "image"
+title = "Direction 1 — Verdant Realm (Stardew-style cozy fantasy)"
+
+[[outputs]]
+id = "R4lMtC4BdMBrCHrfxKuhU"
+uri = "file://attached_assets/generated_images/labyrinths_village.png"
+type = "image"
+title = "Direction 2 — Wayfarer Village (classic RPG town)"
+
+[[outputs]]
+id = "-jQIdNWI0FVDRvwvCzvDq"
+uri = "file://attached_assets/generated_images/labyrinths_dark.png"
+type = "image"
+title = "Direction 3 — Arcane Depths (dark-fantasy isometric)"
+
+[[outputs]]
+id = "0uoDBn1ELtkafIy6ZTL-d"
+uri = "file://attached_assets/generated_images/overworld_16bit_map.png"
+type = "image"
+title = "Overworld as a 16-bit map — six biomes, one style"
+
+[[outputs]]
+id = "ToVq0Ntpp45tu5DdYNXR7"
+uri = "file://attached_assets/generated_images/overworld_16bit_gameplay.png"
+type = "image"
+title = "Zoomed gameplay slice — grass / crystal / lava border"
+
+[[outputs]]
+id = "FnFfsg0xpee3NPwAYWf5x"
+uri = "file://screenshots/overworld-proposed.jpg"
+type = "image"
+title = "PROPOSED — spaced biomes radiating off a central spawn"
+
+[[outputs]]
+id = "LEj2MT0mFD375BJ9tyEqK"
+uri = "file://screenshots/overworld-today.jpg"
+type = "image"
+title = "TODAY — current overlapping / congested layout"
+
+[[outputs]]
+id = "pVzwLSwy_LSXZlAXaaINc"
+uri = "file://screenshots/overworld_proposed_world.jpg"
+type = "image"
+title = "PROPOSED — World view (biomes spaced apart, radiating off spawn)"
+
+[[outputs]]
+id = "cyWHuDQ_RBUFX4fluhW1Y"
+uri = "file://screenshots/overworld_today_world.jpg"
+type = "image"
+title = "TODAY — World view (biomes overlap into one blob)"
+
+[[outputs]]
+id = "6X6yzctM8ao4ge8-i-btd"
+uri = "file://screenshots/overworld_proposed_ground.jpg"
+type = "image"
+title = "PROPOSED — Ground level (open, low density)"
+
+[[outputs]]
+id = "4IDTifWAhbyXpPbZnkp1T"
+uri = "file://screenshots/overworld_today_ground.jpg"
+type = "image"
+title = "TODAY — Ground level (packed, congested, hard biome edges)"
+
+[[outputs]]
+id = "hZmpGT3vJhlRt_aVN4Hj7"
+uri = "file://screenshots/biome_verdant_grove.jpg"
+type = "image"
+title = "Verdant Grove — tree copses with grassy clearings"
+
+[[outputs]]
+id = "hT_55KKmcz13Wot22erxd"
+uri = "file://screenshots/biome_sunlit_ruins.jpg"
+type = "image"
+title = "Sunlit Ruins — open desert, grouped rubble fields & cacti"
+
+[[outputs]]
+id = "XNX-8D2_26pct0Dr48wFs"
+uri = "file://screenshots/biome_tidecaller.jpg"
+type = "image"
+title = "Tidecaller Hollow — coherent ponds, no cut-off river"
+
+[[outputs]]
+id = "bAZsy-xeJKzUNAkkNHNVR"
+uri = "file://screenshots/biome_crystal_caverns.jpg"
+type = "image"
+title = "Crystal Caverns — crystal formations over open floor"
+
+[[outputs]]
+id = "Wu4uIh5Z40Wwpf-eizdxG"
+uri = "file://screenshots/biome_emberforge.jpg"
+type = "image"
+title = "Emberforge Depths — rock clusters on open volcanic ground"
+
+[[outputs]]
+id = "e3kibgbqcMLvdSJV9ruGV"
+uri = "file://screenshots/biome_astral_spire.jpg"
+type = "image"
+title = "Astral Spire — rune spires clustered across open cosmos"

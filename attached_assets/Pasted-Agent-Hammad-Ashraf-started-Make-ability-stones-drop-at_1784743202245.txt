@@ -1,0 +1,91 @@
+Agent
+Hammad Ashraf started: Make ability stones drop at a fair, tunable rate
+Hammad Ashraf started: Show which ability each stone grants in the loadout and inventory
+Hammad Ashraf started: Add real swappable weapons players can equip and see in battle
+Hammad Ashraf started: Give enemies the same hurt and death animations as the player
+full_sword_basic.png
+full_glaive_moon.png
+Hammad Ashraf completed: Make ability stones drop at a fair, tunable rate
+Updated environment
+Hammad Ashraf completed: Show which ability each stone grants in the loadout and inventory
+Completed: Add real swappable weapons players can equip and see in battle
+Updated environment
+Completed: Give enemies the same hurt and death animations as the player
+Updated environment
+Updated environment
+Hammad Ashraf completed: Let players trade items and currency directly with a secure escrow window
+Updated environment
+Hammad Ashraf completed: Offer a wider selection of weapons to find
+Updated environment
+Updated environment
+Completed: Show off the bigger weapon arsenal with a visual gallery
+Updated environment
+Completed: Make the overworld a sprawling streaming world with land plots, infinite zoom, and in-world labyrinth popups
+Updated environment
+Updated environment
+Hammad Ashraf completed: Make each weapon feel different to fight with
+Updated environment
+Completed: Fix enemies getting stuck inside walls during a run
+Updated environment
+Hammad Ashraf completed: Let players challenge each other to PvP duels
+Updated environment
+So i made thes e graphics in replit for another project, so i know you can make graphics like thse with objects etc. Why dont you do this in this projet? Also add actual solana wallet integration
+
+Furthermore build out the game menus etc like an actual game
+
+24 days ago
+I don't want it to look like a ranch game but i want sgood stunning graphiocs. Lets do a few mockups on what you cvna actually make Pose all of these as sepeartee tasks
+
+24 days ago
+Updated environment
+Hammad Ashraf completed: Show players their duel record so wins actually mean something
+Updated environment
+Updated environment
+Updated environment
+Summarize the game for me in detail
+
+Just now
+Labyrinths — Game Summary
+Labyrinths is a browser-based multiplayer dungeon-crawler with a player-owned economy, built on a React + Canvas frontend and a Node/Express API server with PostgreSQL.
+
+Core Concept
+Every player owns a labyrinth — a procedurally generated dungeon they customize — and runs through other players' labyrinths for loot and XP. Owners earn a 20% cut of the loot their visitors collect. It's designed around a real player economy with Solana wallet integration (currently mocked, with on-chain USDC wired in).
+
+The World — Streaming Overworld
+An infinitely zoomable, chunk-streamed 2D top-down world map where every player's labyrinth occupies a plot in one of six biomes: Verdant Grove, Sunlit Ruins, Tidecaller, Crystal Caverns, Emberforge, and Astral Spire.
+Each biome has its own visual theme, ambient particles (pollen, embers, water droplets, stars), and distinct floor tiles.
+Zoom out to see the full world as stylized symbolic regions; zoom in for the detailed LPC sprite view.
+Real-time presence: you can see other players walking around the map as composited LPC sprites.
+Labyrinth popups open in-world (no page navigation) showing difficulty, loot ceiling, entry fee, biome, and leaderboard — then you click Enter to start a run.
+Search: type a labyrinth or player name to fly the camera to their plot.
+The Dungeon Run
+Runs are real-time, client-simulated combat on a canvas-rendered tilemap. The server is authoritative only for completion and rewards.
+Rooms are assembled from a hand-crafted ASCII room library, seeded per labyrinth with a depth/role arc (starter → mid → elite → boss). Owners can unlock new room types (by role and size) with gold, shaping their dungeon's arc.
+Combat: melee and ranged attacks, projectiles, enemy AI chasing the player. Hit feedback includes flinch, hurt flashes, and tip-over death beats. Enemy types: grunt, elite, ranged, boss — each spawning in cleared positions with a runtime un-stick system.
+Combat modes: Auto (auto-targets nearest enemy, auto-fires) or Manual (mouse-aim, hold to attack) — per-device preference set before entering.
+Abilities: Ability Stones drop in runs and equip into two ability slots, granting active combat moves (with cooldowns).
+Loot: at the end of a run, you receive drops sampled across rarities (Common → Legendary). Stones are weighted at ~20% of drops. Boss rooms give a rarity boost. Owner gets 20% cut of the loot value.
+Character & Gear
+Full LPC sprite compositor: the player character is layered from equipped gear — helmet, armor, shoulders, gloves, cape, boots, neck, pants, shield, and weapon — composited in real-time using a shared composeLoadoutSprite function.
+147 weapons from the Universal LPC library (blades, maces, polearms, bows, staves), each with an 832×1344 sprite sheet carrying synthesized walk (all 4 directions) and slash animations.
+Weapon archetypes (sword, glaive, maul, bow, dagger, axe, staff) have distinct stat profiles: swords are balanced, glaives have reach+sweep, mauls have big attack+slow, bows have crit+range.
+Gear stats: attack, defense, speed, critChance, range, attackSpeed — stats are deterministic per (slot, rarity) from the tuned catalog.
+Codex: a full item gallery showing every weapon and armor piece, grouped by rarity, with discovery tracking (which items the player has ever owned).
+Gear comparison: equipping shows upgrade deltas; Best-in-Slot is surfaced on the loadout.
+Multiplayer Features
+Feature	What it does
+Co-op runs	Up to 4 players team up, run the same dungeon together; difficulty scales; rewards split fairly server-side.
+PvP duels	Challenge any overworld player (press F). The server runs a deterministic auto-battle; both players watch a synchronized arena replay with HP bars and ability beats. Outcomes persist to a duel record (wins/losses/win rate shown on the Loadout page).
+Item trading	Two nearby overworld players open an escrow window, each offer items + currency, both confirm, server atomically swaps ownership.
+USDC Marketplace	Players list items for sale; buyers pay with USDC (currently mocked cents); a 5% fee routes to treasury. The system is structured for real Solana USDC with idempotency and race-safe escrow.
+Economy
+Gold — in-game currency earned from runs, spent on room upgrades.
+$LAB — transaction token (entry fees, owner earnings, treasury). Never a drop.
+USDC — marketplace currency; mocked now, structured for on-chain Solana.
+Economy rules: owner 20% is a cut out of visitor loot (no minting); item rewards go 100% to visitors.
+Active / Upcoming Work
+Task #103 (Ready): Visual direction mockups on the Canvas — a few stunning art directions to compare.
+Tasks #104 / #105 (Active, waiting on #103): Full visual overhaul + proper game menus/UI shell.
+#3 / #91: Real Solana wallet sign-in + on-chain USDC marketplace.
+Various polish tasks: stone deduplication, biome flavor, leaderboards, room-pool advisories, and automated tests.
+In short: it's a full-stack, real-time multiplayer dungeon economy game with a depth of systems that rivals early-access indie titles — player-owned dungeons, composited character art, a 1,291-item gear catalog, co-op, PvP, trading, and a USDC marketplace, all running in the browser.
